@@ -80,14 +80,39 @@ export default async function CountryMapPage({ params }: { params: Promise<{ cou
     ["/tools/crow-flies-distance", "Great-Circle Distance"],
   ] as const;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: `${name} Blank Map — SVG & PNG`,
-    description: `Printable ${name} outline map with browser-based SVG and PNG export options.`,
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://mapforge.tools/maps/blank/${country}` },
-    publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
-  };
+  const pageUrl = `https://mapforge.tools/maps/blank/${country}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: `${name} Blank Map — SVG & PNG`,
+      description: `Printable ${name} outline map with browser-based SVG and PNG export options.`,
+      mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+      publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://mapforge.tools/" },
+        { "@type": "ListItem", position: 2, name: "Maps", item: "https://mapforge.tools/maps" },
+        { "@type": "ListItem", position: 3, name: `${name} Blank Map`, item: pageUrl },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        ["Can I print the blank map?", "Yes. SVG is scalable for print and PNG is convenient for documents, slides and quick sharing."],
+        ["Is this a legal boundary map?", "No. It is an educational and reference map based on generalized geographic boundary data, not a cadastral or legal survey."],
+        ["Do I need an account?", "No. The map interface and browser-based export workflow do not require an account."],
+      ].map(([q, a]) => ({
+        "@type": "Question",
+        name: `${name} — ${q}`,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ];
 
   return (
     <div>
