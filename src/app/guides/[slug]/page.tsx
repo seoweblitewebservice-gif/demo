@@ -44,21 +44,6 @@ function Block({ b }: { b: GuideBlock }) {
       return <aside className="my-4 rounded-xl border border-brand/30 bg-brand-soft px-4 py-3 text-sm leading-relaxed text-brand-strong"><strong>Note: </strong>{b.text}</aside>;
     case "toolbox": {
       const tools = b.slugs.map((s) => toolBySlug.get(s)).filter(Boolean);
-      const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: g.title,
-    description: g.description,
-    datePublished: g.date,
-    dateModified: g.date,
-    author: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
-    publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools", logo: { "@type": "ImageObject", url: "https://mapforge.tools/icon.svg" } },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://mapforge.tools/guides/${g.slug}` },
-  };
-
-  return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
         <div className="my-5 rounded-xl border border-line bg-card p-4 font-sans">
           <div className="text-[11px] font-extrabold uppercase tracking-widest text-mute">Tools used in this post</div>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
@@ -196,8 +181,22 @@ export default async function GuidePage({ params }: Props) {
     if (acc >= 2000 && acc > 2300) break;
   }
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: g.title,
+    description: g.description,
+    datePublished: g.date,
+    dateModified: g.date,
+    author: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
+    publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools", logo: { "@type": "ImageObject", url: "https://mapforge.tools/icon.svg" } },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://mapforge.tools/guides/${g.slug}` },
+  };
+
   return (
-    <article className="doc mx-auto max-w-3xl">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+      <article className="doc mx-auto max-w-3xl">
       <nav aria-label="Breadcrumb" className="mb-4 font-sans text-xs text-mute">
         <Link href="/" className="hover:text-brand-strong">Home</Link> / <Link href="/guides" className="hover:text-brand-strong">Blog</Link> / <span className="font-semibold text-ink">{g.title}</span>
       </nav>
@@ -217,6 +216,7 @@ export default async function GuidePage({ params }: Props) {
           ))}
         </ul>
       </div>
-    </article>
+      </article>
+    </>
   );
 }
