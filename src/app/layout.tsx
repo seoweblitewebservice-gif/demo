@@ -11,7 +11,10 @@ export const metadata: Metadata = {
     template: "%s · MapForge",
   },
   description:
-    "Free, fast, browser-first geographic tools: distance and area calculators, radius maps, drive-time isochrones, coordinate converters, KML/GPX/GeoJSON viewers and more. No account needed.",
+    "Free browser-based map and geographic tools for distance, area, radius, routing, coordinates, elevation, blank maps and GPS files. No account required.",
+  applicationName: "MapForge",
+  category: "geographic tools",
+  keywords: ["map tools", "geographic tools", "distance calculator", "area calculator", "coordinate converter", "GPS tools", "blank maps"],
   openGraph: {
     type: "website",
     siteName: "MapForge",
@@ -25,6 +28,9 @@ export const metadata: Metadata = {
     description: "Free browser-first geographic tools: distance, radius, routing, coordinates, map files and more.",
   },
   robots: { index: true, follow: true },
+  authors: [{ name: "MapForge" }],
+  creator: "MapForge",
+  publisher: "MapForge",
 };
 
 export const viewport: Viewport = {
