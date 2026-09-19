@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How MapForge handles your data: browser-first processing, no account requirements, and exactly which external services your requests touch.",
+  description: "How MapBench handles your data: browser-first processing, no account requirements, and exactly which external services your requests touch.",
   alternates: { canonical: "/privacy" },
 };
 
