@@ -113,7 +113,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur">
       <a href="#main" className="skip-link">Skip to content</a>
       <div className="container-sf flex h-12 items-center gap-4">
-        <Link href="/" aria-label="MapForge home"><Logo /></Link>
+        <Link href="/" aria-label="MapBench home"><Logo /></Link>
         <nav className="ml-auto hidden items-center gap-1 md:flex" aria-label="Main">
           {/* Tools dropdown */}
           <div className="relative" ref={toolsRef}>
