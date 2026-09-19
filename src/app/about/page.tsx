@@ -3,18 +3,18 @@ import Link from "next/link";
 import { TOOLS } from "@/lib/registry";
 
 export const metadata: Metadata = {
-  title: "About MapForge",
-  description: "MapForge is a free, browser-first platform of geographic tools: distance and area calculators, routing, coordinate converters, map file viewers and map makers.",
+  title: "About MapBench",
+  description: "MapBench is a free, browser-first platform of geographic tools: distance and area calculators, routing, coordinate converters, map file viewers and map makers.",
   alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">About MapForge</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">About MapBench</h1>
       <div className="prose-sf mt-6">
         <p>
-          MapForge exists for one simple reason: geographic questions are everyday questions. <em>How far apart are these two towns?
+          MapBench exists for one simple reason: geographic questions are everyday questions. <em>How far apart are these two towns?
           What county am I standing in? How big is this field? What's inside my delivery radius?</em> Answering them shouldn't
           require a GIS license, a subscription, or handing your data to an unknown server.
         </p>
@@ -39,7 +39,7 @@ export default function AboutPage() {
         </p>
         <h2>The name</h2>
         <p>
-          A forge is where raw material becomes useful tools. MapForge takes the world's open geographic data and shapes it
+          A forge is where raw material becomes useful tools. MapBench takes the world's open geographic data and shapes it
           into small, sharp instruments you can pick up and use immediately.
         </p>
       </div>
