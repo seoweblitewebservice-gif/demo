@@ -4,7 +4,7 @@ import ToolsDirectory from "@/components/ToolsDirectory";
 
 export const metadata: Metadata = {
   title: "All Free Map & Geographic Tools",
-  description: "The complete MapForge directory: distance and bearing calculators, radius and area tools, routing, coordinate converters, KML/GPX/GeoJSON viewers, map makers and more.",
+  description: "The complete MapBench directory: distance and bearing calculators, radius and area tools, routing, coordinate converters, KML/GPX/GeoJSON viewers, map makers and more.",
   alternates: { canonical: "/tools" },
 };
 
