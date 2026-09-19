@@ -39,7 +39,7 @@ export const GUIDES3: Guide[] = [
   },
   {
     slug: "will-it-grow-here",
-    title: "Will It Grow Here? Hardiness Zones and Climate Codes for Gardeners",
+    title: "Hardiness Zones & Climate Codes: Will It Grow Here?",
     description: "Seed packets speak in zones, nurseries in vibes. How to read your hardiness zone and Köppen code honestly — and garden with the microclimate, not against it.",
     date: "2026-02-02",
     readMins: 7,
