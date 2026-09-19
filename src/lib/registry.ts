@@ -3,7 +3,7 @@
 
 export type CategoryId =
   | "location" | "distance" | "radius" | "routing" | "coordinates"
-  | "files" | "creation" | "earth" | "sun" | "lines" | "population";
+  | "files" | "creation" | "earth" | "sun" | "lines" | "population" | "network";
 
 export interface CategoryDef {
   id: CategoryId; label: string; short: string; tone: string;
@@ -21,6 +21,7 @@ export const CATEGORIES: CategoryDef[] = [
   { id: "sun", label: "Sun & Moon", short: "Sunrise, sunset, day length and lunar phases for any place and date.", tone: "#a16207" },
   { id: "lines", label: "Geographic Lines", short: "Explore the Equator, meridians, tropics and polar circles on a live map.", tone: "#334155" },
   { id: "population", label: "Places & Population", short: "Find cities inside a radius and estimate population from curated data.", tone: "#7c2d12" },
+  { id: "network", label: "IP & Network", short: "Look up public IP addresses, geolocation, ISP, ASN and network details.", tone: "#475569" },
 ];
 
 export interface ToolDef {
@@ -208,6 +209,41 @@ export const TOOLS: ToolDef[] = [
     howTo: ["Choose a category (food, health, transport, money…).", "Click the map or use your GPS position.", "Browse results sorted by distance and open each place on the map."],
     related: ["find-my-location", "map-radius", "place-lookup", "cities-within-radius"],
     method: "Live queries to the public Overpass API; please avoid automated bulk use.",
+  },
+
+  {
+    slug: "ip-address-lookup",
+    name: "IP Address Lookup",
+    short: "Look up any public IPv4 or IPv6 address for country, city, coordinates, timezone, ISP, organization and ASN details.",
+    intro: "Enter an IP address or detect your public IP. MapBench returns useful network and geographic context from a public IP intelligence service without requiring an account.",
+    category: "network", scope: "Worldwide", component: "iplookup",
+    keywords: ["ip lookup", "ip address lookup", "ip geolocation", "ip location", "isp lookup", "asn lookup"],
+    popular: true,
+    faq: [
+      ["Can I look up my own IP?", "Yes. Use Detect my public IP to query the public address visible to the service."],
+      ["Is IP geolocation exact?", "No. IP-based location is approximate and can identify a city or region rather than your physical position. Use browser GPS for precise location."],
+      ["Does the lookup reveal my exact address?", "No. Public IP geolocation generally provides network and approximate geographic information, not a verified street address."],
+    ],
+    howTo: ["Enter an IPv4 or IPv6 address.", "Or choose Detect my public IP.", "Review country, region, city, coordinates, timezone, ISP and ASN information."],
+    related: ["find-my-location", "what-country-am-i-in", "what-city-am-i-in", "reverse-geocoder"],
+    method: "IP geolocation data is provided by the public ipwho.is service. IP-based results are approximate and should not be treated as GPS coordinates."
+  },
+  {
+    slug: "what-is-my-public-ip",
+    name: "What Is My IP Address?",
+    short: "Instantly find your public IPv4 or IPv6 address and see its approximate country, city, ISP, timezone and ASN.",
+    intro: "Your public IP is the address websites can see from your internet connection. Detect it in one click, then inspect the associated network and approximate geographic details.",
+    category: "network", scope: "Worldwide", component: "iplookup",
+    keywords: ["what is my ip", "my public ip", "my ip address", "check ip", "find my ip"],
+    popular: true,
+    faq: [
+      ["Is this my local IP?", "No. This tool shows the public IP visible to internet services, not private addresses such as 192.168.x.x or 10.x.x.x."],
+      ["Can I have IPv4 and IPv6 at the same time?", "Yes. Some networks expose both. The detected address depends on how your connection reaches the lookup service."],
+      ["Does my IP reveal my exact location?", "No. IP location is an approximation and can differ from your actual GPS position."],
+    ],
+    howTo: ["Open the tool.", "Choose Detect my public IP.", "Copy the address or review its approximate geographic and network details."],
+    related: ["ip-address-lookup", "find-my-location", "what-country-am-i-in", "what-city-am-i-in"],
+    method: "Public IP detection and approximate geolocation via ipwho.is."
   },
 
   // ---------------- DISTANCE ----------------
