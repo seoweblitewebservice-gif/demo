@@ -55,7 +55,18 @@ export default function ToolClient({ slug, locale }: { slug: string; locale?: Lo
       </div>
 
       <div className="mt-10">
-        <ToolContent tool={tool} />
+        {localized ? (
+          <section className="doc space-y-6" aria-label="Tool explanation">
+            <section>
+              <h2 className="sect-h">Quick answer</h2>
+              <p className="mt-3 text-mute">{localized.quickAnswer}</p>
+            </section>
+            <section>
+              <h2 className="sect-h">{localized.longForm.title}</h2>
+              {localized.longForm.paras.map((paragraph, i) => <p key={i} className="mt-3 text-mute leading-relaxed">{paragraph}</p>)}
+            </section>
+          </section>
+        ) : <ToolContent tool={tool} />}
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
