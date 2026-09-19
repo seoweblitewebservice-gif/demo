@@ -5,9 +5,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 type MLMap = maplibregl.Map;
 
-/** Same-origin proxied vector style (works everywhere), with direct fallback. */
-export const PRIMARY_STYLE = "/api/ofm-style";
-export const DIRECT_STYLE = "https://tiles.openfreemap.org/styles/positron";
+/** Use the official OpenFreeMap style directly first; fall back to our same-origin proxy if the browser blocks the upstream style. */
+export const PRIMARY_STYLE = "https://tiles.openfreemap.org/styles/positron";
+export const DIRECT_STYLE = "/api/ofm-style";
 export const ATTRIBUTION = "© OpenStreetMap contributors · OpenFreeMap";
 
 /**
