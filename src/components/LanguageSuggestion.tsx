@@ -1,0 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { LOCALES, LOCALE_NAMES, type Locale } from "@/lib/i18n";
+export default function LanguageSuggestion(){const [locale,setLocale]=useState<Locale|null>(null);const [show,setShow]=useState(false);useEffect(()=>{try{if(localStorage.getItem("mapbench-language-dismissed"))return;const n=navigator.language.split("-")[0] as Locale;if((LOCALES as readonly string[]).includes(n)){setLocale(n);setShow(true);}}catch{}} ,[]);if(!show||!locale)return null;return <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto flex max-w-xl items-center justify-between gap-3 rounded-xl border border-line bg-card p-3 shadow-xl"><p className="text-sm">Your browser language is <strong>{LOCALE_NAMES[locale]}</strong>.</p><div className="flex shrink-0 gap-2"><Link href={`/${locale}`} className="btn btn-primary btn-sm">{LOCALE_NAMES[locale]}</Link><button type="button" className="btn btn-ghost btn-sm" onClick={()=>{setShow(false);try{localStorage.setItem("mapbench-language-dismissed","1")}catch{}}}>English</button></div></div>}
