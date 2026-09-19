@@ -4,7 +4,7 @@
 
 export async function GET(_req: Request) {
   try {
-    const up = await fetch("https://tiles.openfreemap.org/styles/positron", { cache: "no-store" });
+    const up = await fetch("https://tiles.openfreemap.org/styles/liberty", { cache: "no-store" });
     if (!up.ok) return new Response("Upstream style unavailable", { status: 502 });
     const text = await up.text();
     // Rewrite to same-origin RELATIVE paths so the browser resolves them
