@@ -27,3 +27,5 @@ export const LOCALIZED_TOOLS: Partial<Record<Locale,Record<string,LocalizedToolC
   }
 };
 export function getLocalizedTool(locale:Locale,slug:string){return LOCALIZED_TOOLS[locale]?.[slug];}
+export function localizedToolSlugs(locale:Locale){return Object.keys(LOCALIZED_TOOLS[locale] ?? {});}
+export function isToolLocalized(locale:Locale,slug:string){return Boolean(LOCALIZED_TOOLS[locale]?.[slug]);}
