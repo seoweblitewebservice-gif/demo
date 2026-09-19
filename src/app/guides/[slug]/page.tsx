@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: `/guides/${g.slug}` },
     keywords: [g.title, "map guide", "geography guide", "GPS", "mapping"],
     robots: { index: true, follow: true },
-    openGraph: { title: g.title, description: g.description, type: "article", url: `/guides/${g.slug}`, siteName: "MapForge" },
+    openGraph: { title: g.title, description: g.description, type: "article", url: `/guides/${g.slug}`, siteName: "MapBench" },
     twitter: { card: "summary", title: g.title, description: g.description },
   };
 }
@@ -190,9 +190,9 @@ export default async function GuidePage({ params }: Props) {
     description: g.description,
     datePublished: g.date,
     dateModified: g.date,
-    author: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
-    publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools", logo: { "@type": "ImageObject", url: "https://mapforge.tools/icon.svg" } },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://mapforge.tools/guides/${g.slug}` },
+    author: { "@type": "Organization", name: "MapBench", url: "https://www.mapbench.site" },
+    publisher: { "@type": "Organization", name: "MapBench", url: "https://www.mapbench.site", logo: { "@type": "ImageObject", url: "https://www.mapbench.site/icon.svg" } },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.mapbench.site/guides/${g.slug}` },
   };
 
   return (
@@ -202,7 +202,7 @@ export default async function GuidePage({ params }: Props) {
       <nav aria-label="Breadcrumb" className="mb-4 font-sans text-xs text-mute">
         <Link href="/" className="hover:text-brand-strong">Home</Link> / <Link href="/guides" className="hover:text-brand-strong">Blog</Link> / <span className="font-semibold text-ink">{g.title}</span>
       </nav>
-      <p className="font-sans text-xs font-bold uppercase tracking-wide text-mute">{new Date(g.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {g.readMins} min read · MapForge editorial</p>
+      <p className="font-sans text-xs font-bold uppercase tracking-wide text-mute">{new Date(g.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {g.readMins} min read · MapBench editorial</p>
       <h1 className="mt-2 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">{g.title}</h1>
       <div className="mt-6">
         {g.blocks.map((b, i) => <Block key={i} b={b} />)}
