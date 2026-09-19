@@ -6,7 +6,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 type MLMap = maplibregl.Map;
 
 /** Use the official OpenFreeMap style directly first; fall back to our same-origin proxy if the browser blocks the upstream style. */
-export const PRIMARY_STYLE = "https://tiles.openfreemap.org/styles/positron";
+export const PRIMARY_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 export const DIRECT_STYLE = "/api/ofm-style";
 export const ATTRIBUTION = "© OpenStreetMap contributors · OpenFreeMap";
 
