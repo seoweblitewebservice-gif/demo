@@ -13,7 +13,7 @@ const countryPages = Array.from(new Set(((countriesTopo as any).objects.countrie
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
-    "", "/tools", "/maps", "/guides", "/about", "/methodology", "/data-sources", "/privacy", "/terms",
+    "", "/tools", "/maps", "/guides", "/about", "/methodology", "/data-sources", "/privacy", "/terms", "/contact",
   ].map((path) => ({
     url: `${BASE}${path}`,
     changeFrequency: path === "" ? "weekly" : "monthly",
