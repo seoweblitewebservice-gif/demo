@@ -75,14 +75,16 @@ export function addressBreakdown(address: Record<string, string>) {
   };
 }
 
-export function geolocation(): Promise<LatLng> {
+export interface GeolocationDetails extends LatLng { accuracy: number; altitude?: number | null; heading?: number | null; speed?: number | null; timestamp: number }
+
+export function geolocationDetails(): Promise<GeolocationDetails> {
   return new Promise((resolve, reject) => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       reject(new Error("This browser does not support geolocation."));
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy, altitude: pos.coords.altitude, heading: pos.coords.heading, speed: pos.coords.speed, timestamp: pos.timestamp }),
       (err) => {
         const msg = err.code === 1
           ? "Location permission was denied. Enable it in your browser, or search for a place instead."
@@ -94,4 +96,9 @@ export function geolocation(): Promise<LatLng> {
       { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 },
     );
   });
+}
+
+
+export function geolocation(): Promise<LatLng> {
+  return geolocationDetails().then(({ lat, lng }) => ({ lat, lng }));
 }
