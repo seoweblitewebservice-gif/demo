@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Free Map Tools & Blank Maps",
+  description: "Free online map and geographic tools for distance, area, radius, routing, coordinates, elevation, GPS files and printable blank maps. No account required.",
+  alternates: { canonical: "/" },
+};
+
 import { CATEGORIES, TOOLS } from "@/lib/registry";
 import { ALL_GUIDES } from "@/data/allGuides";
 import { TOOL_COPY } from "@/data/toolCopy";
