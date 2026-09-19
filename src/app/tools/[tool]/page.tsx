@@ -15,15 +15,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const tool = toolBySlug.get(slug);
   if (!tool) return {};
   const url = `/tools/${tool.slug}`;
-  const absoluteUrl = `https://mapforge.tools${url}`;
+  const absoluteUrl = `https://www.mapbench.site${url}`;
   return {
     title: tool.name,
     description: tool.short,
     keywords: tool.keywords,
     alternates: { canonical: url },
     robots: { index: true, follow: true },
-    openGraph: { type: "website", title: `${tool.name} — Free Online Tool`, description: tool.short, url, siteName: "MapForge" },
-    twitter: { card: "summary", title: `${tool.name} · MapForge`, description: tool.short },
+    openGraph: { type: "website", title: `${tool.name} — Free Online Tool`, description: tool.short, url, siteName: "MapBench" },
+    twitter: { card: "summary", title: `${tool.name} · MapBench`, description: tool.short },
   };
 }
 
@@ -33,7 +33,7 @@ export default async function ToolPage({ params }: Props) {
   if (!tool) notFound();
   const category = CATEGORIES.find((c) => c.id === tool.category);
   const url = `/tools/${tool.slug}`;
-  const absoluteUrl = `https://mapforge.tools${url}`;
+  const absoluteUrl = `https://www.mapbench.site${url}`;
 
   const jsonLd = [
     {
@@ -52,16 +52,16 @@ export default async function ToolPage({ params }: Props) {
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "MapForge",
-      url: "https://mapforge.tools",
+      name: "MapBench",
+      url: "https://www.mapbench.site",
     },
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://mapforge.tools/" },
-        { "@type": "ListItem", position: 2, name: "Tools", item: "https://mapforge.tools/tools" },
-        ...(category ? [{ "@type": "ListItem", position: 3, name: category.label, item: `https://mapforge.tools/tools?cat=${category.id}` }] : []),
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.mapbench.site/" },
+        { "@type": "ListItem", position: 2, name: "Tools", item: "https://www.mapbench.site/tools" },
+        ...(category ? [{ "@type": "ListItem", position: 3, name: category.label, item: `https://www.mapbench.site/tools?cat=${category.id}` }] : []),
         { "@type": "ListItem", position: category ? 4 : 3, name: tool.name },
       ],
     },
