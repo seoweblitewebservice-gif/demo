@@ -159,10 +159,10 @@ function ShareControls({ locale }: { locale?: Locale }) {
           setTimeout(() => { btn.textContent = locale ? getLocaleUI(locale).copyLink : "Copy link"; }, 1600);
         }}
       >
-        Copy link
+        {locale ? getLocaleUI(locale).copyLink : "Copy link"}
       </button>
       <button type="button" className="btn btn-ghost btn-sm" onClick={() => { window.location.href = window.location.pathname; }}>
-        Reset
+        {locale ? getLocaleUI(locale).reset : "Reset"}
       </button>
     </>
   );
