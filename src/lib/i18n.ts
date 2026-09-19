@@ -1,3 +1,4 @@
+// Multilingual SEO locale routing
 export const LOCALES = [
   "es", "de", "fr", "it", "pt", "nl", "pl", "ru", "sv", "da", "no", "fi", "cs", "ro", "el", "hu", "tr", "uk", "ar", "ja", "ko", "zh", "hi"
 ] as const;
