@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Data Sources & Attribution",
-  description: "The open datasets behind MapForge: OpenStreetMap, OpenFreeMap, Photon, Nominatim, FOSSGIS Valhalla, OSRM, Open-Meteo, Natural Earth and the US Census — with licences.",
+  description: "The open datasets behind MapBench: OpenStreetMap, OpenFreeMap, Photon, Nominatim, FOSSGIS Valhalla, OSRM, Open-Meteo, Natural Earth and the US Census — with licences.",
   alternates: { canonical: "/data-sources" },
 };
 
@@ -16,7 +16,7 @@ const SOURCES = [
   ["Nearby places (POI)", "Overpass API", "Live queries against OpenStreetMap.", "Data © OpenStreetMap contributors (ODbL)"],
   ["Blank maps — world & countries", "Natural Earth (via world-atlas)", "Public-domain 1:110m cultural/physical geometry.", "Public domain — no attribution required"],
   ["Blank maps — US states & nation", "US Census TIGER (via us-atlas)", "1:10m state boundary topology.", "US government work — public domain"],
-  ["Major cities dataset", "Curated by MapForge", "~200 major cities with approximate municipal populations, ≈2020 vintage. Used only where clearly labelled as estimates.", "CC-BY 4.0 (MapForge compilation)"],
+  ["Major cities dataset", "Curated by MapBench", "~200 major cities with approximate municipal populations, ≈2020 vintage. Used only where clearly labelled as estimates.", "CC-BY 4.0 (MapBench compilation)"],
   ["Astronomy", "Implemented locally", "NOAA solar algorithm & synodic lunar cycle — no external service.", "Standard public algorithms"],
 ];
 
@@ -25,7 +25,7 @@ export default function DataSourcesPage() {
     <div className="mx-auto max-w-4xl">
       <h1 className="font-display text-3xl font-bold tracking-tight">Data Sources</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mute">
-        MapForge is built entirely on open data and free public services. Here is exactly what powers what — and what licence it carries.
+        MapBench is built entirely on open data and free public services. Here is exactly what powers what — and what licence it carries.
       </p>
       <div className="mt-6 space-y-3">
         {SOURCES.map(([name, provider, desc, license]) => (
