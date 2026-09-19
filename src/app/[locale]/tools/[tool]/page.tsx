@@ -1,0 +1,55 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { toolBySlug, TOOLS, CATEGORIES } from "@/lib/registry";
+import { USER_FAQS } from "@/data/userFaqs";
+import ToolClient from "@/components/ToolClient";
+import { isLocale, LOCALES, LOCALE_NAMES, type Locale } from "@/lib/i18n";
+
+interface Props { params: Promise<{ locale: string; tool: string }> }
+const BASE = "https://www.mapbench.site";
+
+export function generateStaticParams() {
+  return LOCALES.flatMap((locale) => TOOLS.map((t) => ({ locale, tool: t.slug })));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, tool: slug } = await params;
+  if (!isLocale(locale)) return {};
+  const tool = toolBySlug.get(slug);
+  if (!tool) return {};
+  const url = `/${locale}/tools/${tool.slug}`;
+  const languages: Record<string, string> = { en: `${BASE}/tools/${tool.slug}` };
+  for (const l of LOCALES) languages[l] = `${BASE}/${l}/tools/${tool.slug}`;
+  return {
+    title: tool.name,
+    description: tool.short,
+    keywords: tool.keywords,
+    alternates: { canonical: url, languages },
+    openGraph: { type: "website", title: `${tool.name} — MapBench`, description: tool.short, url, siteName: "MapBench", locale },
+    robots: { index: true, follow: true },
+  };
+}
+
+export default async function LocalizedToolPage({ params }: Props) {
+  const { locale, tool: slug } = await params;
+  if (!isLocale(locale) || !toolBySlug.has(slug)) notFound();
+  const tool = toolBySlug.get(slug)!;
+  const category = CATEGORIES.find((c) => c.id === tool.category);
+  const absoluteUrl = `${BASE}/${locale}/tools/${tool.slug}`;
+  const languages = [{ code: "en", url: `${BASE}/tools/${tool.slug}` }, ...LOCALES.map((l) => ({ code: l, url: `${BASE}/${l}/tools/${tool.slug}` }))];
+  const jsonLd = [
+    { "@context":"https://schema.org", "@type":"WebApplication", "@id":`${absoluteUrl}#tool`, name:tool.name, description:tool.short, url:absoluteUrl, applicationCategory:"UtilitiesApplication", operatingSystem:"Any (web browser)", isAccessibleForFree:true, offers:{"@type":"Offer",price:"0",priceCurrency:"USD"} },
+    { "@context":"https://schema.org", "@type":"BreadcrumbList", itemListElement:[
+      {"@type":"ListItem",position:1,name:"MapBench",item:`${BASE}/${locale}`},
+      {"@type":"ListItem",position:2,name:category?.label ?? "Tools",item:`${BASE}/${locale}/tools`},
+      {"@type":"ListItem",position:3,name:tool.name},
+    ] },
+    { "@context":"https://schema.org", "@type":"FAQPage", mainEntity:[...tool.faq,...(USER_FAQS[tool.category]??[])].map(([q,a])=>({"@type":"Question",name:q,acceptedAnswer:{"@type":"Answer",text:a}})) }
+  ];
+  return <>
+    <div className="mb-4 flex justify-end"><LanguageSwitcher locale={locale} /></div>
+    {languages.map((l) => <link key={l.code} rel="alternate" hrefLang={l.code} href={l.url} />)}
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jsonLd)}} />
+    <ToolClient slug={slug} locale={locale} />
+  </>;
+}
