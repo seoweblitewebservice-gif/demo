@@ -1,0 +1,96 @@
+import type { Guide } from "./guides";
+
+// Blog posts 4–8 (original, human-voiced, tool-linked).
+export const GUIDES2: Guide[] = [
+  {
+    slug: "road-trip-with-free-map-tools",
+    title: "Planning a Road Trip With Nothing but Free Map Tools",
+    description: "A complete weekend-warrior workflow: stops, optimized order, fuel budget, drive-time sanity checks and a GPX file for the car — all without a single paid app.",
+    date: "2026-01-12",
+    readMins: 7,
+    blocks: [
+      { t: "p", text: "Every good road trip starts as a argument about stops, and every argument about stops ends when somebody puts them all on one map. My first move is always the multi-stop route planner: drop the start, then every 'we have to stop here' the group produces, cap it at twelve, and let the engine draw the honest version of the day. The per-leg table does the diplomatic work for you — nobody can claim a detour is 'on the way' once the kilometres are on screen." },
+      { t: "p", text: "Then I press the optimize button, because humans are confidently bad at stop ordering. On a recent eight-stop coastal run, the reordered route cut a fifth off the total distance without dropping a single stop — the savings were all backtracking we couldn't see from the kitchen table. Keep your first stop fixed as the origin (home, the rental desk, wherever) and let the middle reorder itself." },
+      { t: "h2", text: "Budgeting the boring parts" },
+      { t: "p", text: "Fuel comes next. I feed the same two endpoints into the fuel cost calculator with the car's observed consumption — not the brochure number, the number from the last three fill-ups — and the trip stops being abstract. Round trip, one tank or two, cost per person: the arithmetic that kills bad ideas early is exactly the arithmetic people skip." },
+      { t: "p", text: "The drive-time map earns its place at lunch stops. Drop the pin on a candidate town, look at the 30-minute ring, and pick a viewpoint or beach inside it instead of gambling on 'something along the road'. Isochrones follow roads, not circles, so the ring already knows about the bridge you'd otherwise discover the hard way." },
+      { t: "h2", text: "The file that saves the day" },
+      { t: "p", text: "Last step: export the route as GPX and load it into whatever navigation app the car tolerates. When signal dies in the third tunnel of the day, the downloaded track is the trip. And afterwards, that same GPX opens in the GPX viewer to produce the elevation profile everyone asks about — the climb nobody noticed, now with a chart." },
+      { t: "p", text: "None of this costs anything, none of it needs an account, and every number came with its method printed next to it. A road trip planned like that isn't less spontaneous — it's spontaneous in the right places, because the boring decisions were made at the kitchen table where they belong." },
+      { t: "toolbox", slugs: ["multi-stop-route-planner", "route-optimizer", "fuel-cost-calculator", "drive-time-map", "gpx-viewer"] },
+    ],
+  },
+  {
+    slug: "crow-flies-when-it-lies",
+    title: "What 'As the Crow Flies' Actually Means — and When It Lies to You",
+    description: "Great-circle distance is the planet's honest answer, but roads, borders and rivers charge a tax. A field guide to knowing which distance your question needs.",
+    date: "2026-01-05",
+    readMins: 6,
+    blocks: [
+      { t: "p", text: "There is a moment in every distance argument where someone says 'but it's only forty kilometres!' and the other person says 'it took me an hour!' and both are right. The first number is the crow's — the great-circle arc, the shortest possible path over the sphere. The second is the road's. The whole craft of using distance tools is knowing which bird you're quoting." },
+      { t: "p", text: "The crow's number is reproducible forever from two coordinates, and it's the right answer for a surprising list of jobs: radio range, drone batteries, wildlife movement, how far the lightning was, whether two offices are 'close' in a merger deck. It is also a lower bound — nothing on wheels can beat it, which makes it a built-in lie detector for any quoted route." },
+      { t: "h2", text: "The tax collectors" },
+      { t: "p", text: "Roads add their tax in three currencies: topology (rivers, ridges, one missing bridge), law (borders, one-way systems, roads your vehicle class can't use) and speed (a straight 100 km/h line versus a蜿蜒 valley road). In flat, gridded places the tax is 15–25%; in fjord country it can triple the distance. The driving distance calculator shows the taxed figure, and comparing the two is the fastest geography lesson available — the gap itself is information about the landscape." },
+      { t: "p", text: "My rule of thumb after years of this: quotes for humans get the road number with the crow's number in parentheses; quotes for physics get the crow alone; and anything with a schedule attached gets the travel-time tool, because time is distance plus sociology. When a tool prints all three rungs of that ladder, use all three — and when someone forwards you a single mysterious number, you now know the first question to ask: which bird flew this?" },
+      { t: "toolbox", slugs: ["crow-flies-distance", "driving-distance-calculator", "distance-between-two-places", "travel-time-calculator"] },
+    ],
+  },
+  {
+    slug: "gps-file-workflows",
+    title: "The Right Format for Every Job: GPS Files in Real Life",
+    description: "KML from Google My Maps, GPX from the bike computer, GeoJSON from the analyst — a practical workflow for converting without losing what matters.",
+    date: "2025-12-18",
+    readMins: 6,
+    blocks: [
+      { t: "p", text: "Every geographic file arrives with a pedigree, and the pedigree tells you what it will survive. The KML from a friend's Google My Maps trip carries names, descriptions and the folder structure of memory — but treat its styling as decoration, because converters politely drop it. The GPX from your bike computer carries the two things GPX was born for: timestamps and elevation, point by point. The GeoJSON from a colleague carries data — properties, categories, the raw material of analysis — and nothing else. Knowing what each format loves tells you what each conversion will cost." },
+      { t: "h2", text: "My three-step intake ritual" },
+      { t: "ul", items: [
+        "Open it locally and read the validation line before anything else — feature counts by type, bounding box, and a glance at three random property rows.",
+        "Check the bounding box like a paranoid person: a planet-spanning box means one corrupt vertex; a box in the wrong ocean means swapped columns.",
+        "Only then convert, and name the loss out loud: 'GPX export — polygons became boundary tracks, properties trimmed.'",
+      ] },
+      { t: "p", text: "The ritual exists because the failure modes are so consistent they're almost comforting. A KMZ that 'won't open' is a ZIP archive wearing a costume — unzip it and the KML walks out. A CSV map of the wrong hemisphere is a lat/lng swap, visible in two seconds on the map and invisible in a spreadsheet forever. A GPX elevation profile that looks like static isn't broken math; it's your receiver being honest about its bad day." },
+      { t: "p", text: "And keep the originals. Conversions are cheap and lossy; originals are forever. The day someone asks 'but what did the file actually say?', the person holding the untouched source is the calm one in the room. That calm is the entire point of data hygiene — and a local, private workbench is where it starts, because nothing uploads, nothing leaks, and the only thing that leaves your machine is the export you chose." },
+      { t: "toolbox", slugs: ["gpx-viewer", "kml-viewer", "geojson-viewer", "csv-to-map"] },
+    ],
+  },
+  {
+    slug: "reading-isochrones-like-a-planner",
+    title: "Reading an Isochrone Map Like a City Planner",
+    description: "Those lumpy drive-time shapes are the city telling you its secrets. How to read fingers, holes and lobes — and use them for real decisions.",
+    date: "2025-12-08",
+    readMins: 7,
+    blocks: [
+      { t: "p", text: "The first time you generate a drive-time map, the shape looks like a spill. The second time, it looks like your city. That shift is the whole skill: isochrones are not circles with attitude, they are the road network's self-portrait, drawn in minutes. A long finger reaching north is a motorway. A bite missing from the east is a river with one bridge. A lopsided blob is a one-way system doing quietly what it does every day." },
+      { t: "h2", text: "Three reads that pay rent" },
+      { t: "ul", items: [
+        "The house hunt: overlay your workplace's 30-minute ring on the listing map. Everything outside is a promise you'll break by February.",
+        "The delivery menu: price bands by 15/30/45 rings instead of straight-line radius — the rings already know the bridge exists.",
+        "The argument with council: a service-area polygon for 'what if the bridge had a bus lane' is worth a hundred adjectives in a committee meeting.",
+      ] },
+      { t: "p", text: "The discipline is remembering what the shape is not. It is not live traffic — it's free-flow physics, and rush hour adds the sociology. It is not a promise about walking comfort, only about the network as mapped. And it is not the same question as a radius circle: '10 km' and '15 minutes' overlap less than anyone expects in a car-dependent city, which is exactly why the two tools cross-link each other so insistently." },
+      { t: "p", text: "Export the polygons and they become evidence: GeoJSON drops into any GIS or report, carrying its mode and contours in the properties so future-you can audit it. That is the quiet difference between a pretty map and an instrument — the instrument remembers its own settings. Generate one for your office, your gym and your mother's house, and you will know your city's skeleton better than most people who plan it." },
+      { t: "toolbox", slugs: ["isochrone-map", "drive-time-map", "service-area-map", "map-radius"] },
+    ],
+  },
+  {
+    slug: "how-accurate-is-your-gps",
+    title: "How Accurate Is Your GPS, Really? A Practical Primer",
+    description: "Five decimals, one metre, and other promises your phone can't keep. What GPS precision actually means, and how to store coordinates honestly.",
+    date: "2025-11-24",
+    readMins: 6,
+    blocks: [
+      { t: "p", text: "Your phone will happily display a latitude with seven decimal places, which is either a metre-scale claim or a small work of fiction depending on the sky above you. Under open sky, a modern phone's GPS settles to roughly five metres, sometimes three. Indoors, the satellite geometry collapses and the browser quietly falls back to Wi-Fi and cell-tower guesses that can be a city block off — while still displaying all seven confident decimals. The number of digits is a formatting choice; the accuracy is a physical fact. Confusing the two is the most common coordinate sin." },
+      { t: "h2", text: "A precision ladder worth memorising" },
+      { t: "ul", items: [
+        "3 decimals ≈ 110 m — the neighbourhood, the trailhead, the town.",
+        "4 decimals ≈ 11 m — the building, the field gate.",
+        "5 decimals ≈ 1 m — where consumer GPS earns its keep; stop here.",
+        "6+ decimals — claims your receiver cannot make; survey territory.",
+      ] },
+      { t: "p", text: "Storage follows the same honesty: decimal degrees on WGS84, five or six decimals, signed, and convert at the display edge for whoever needs DMS or a grid reference. The converters make that painless, and the map preview makes it safe — because the eye catches in two seconds what the table hides for months: a swapped pair washing up in the ocean, a forgotten minus sign planting a pin in the wrong hemisphere." },
+      { t: "p", text: "So the ritual is small and saves real pain: paste, look at the pin, then trust. When the pin lands where your feet were, the coordinates are true; when it doesn't, you've caught the error for the price of a glance. Precision is not a number of digits — it's the agreement between the claim and the sky, and every good coordinate habit is just that agreement, kept." },
+      { t: "toolbox", slugs: ["latitude-longitude-finder", "coordinate-converter", "find-my-location", "gps-coordinate-lookup"] },
+    ],
+  },
+];

@@ -1,0 +1,184 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import type { Map as MLMap } from "maplibre-gl";
+import { fmtCoords, isValidLat, isValidLng, parseCoordPair, type LatLng } from "@/lib/geo";
+import { addressBreakdown, geolocation, nominatimReverse } from "@/lib/geocode";
+import { readUrlParams, syncUrl, CopyBtn, ErrorBox, Spinner, Stat, Field } from "@/components/ui";
+import { DynamicMap, pinElement, PlaceField, type PlaceValue } from "./shared";
+import LocationSearch from "@/components/LocationSearch";
+
+type Mode = "forward" | "reverse" | "locate";
+
+const FOCUS_LABELS: Record<string, string> = {
+  county: "County", city: "City", state: "State / Region", country: "Country", postcode: "Postcode",
+};
+
+export default function GeocoderTool({ params }: { params?: Record<string, unknown> }) {
+  const mode = (params?.mode as Mode) ?? "reverse";
+  const focus = (params?.focus as string) ?? "";
+  const [point, setPoint] = useState<LatLng | null>(() => {
+    const p = readUrlParams();
+    const lat = parseFloat(p.get("lat") ?? ""), lng = parseFloat(p.get("lng") ?? "");
+    return isValidLat(lat) && isValidLng(lng) ? { lat, lng } : null;
+  });
+  const [forward, setForward] = useState<PlaceValue | null>(null);
+  const [latIn, setLatIn] = useState("");
+  const [lngIn, setLngIn] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<ReturnType<typeof addressBreakdown> & { displayName: string } | null>(null);
+  const mapRef = useRef<MLMap | null>(null);
+  const libRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (point) syncUrl({ lat: point.lat.toFixed(6), lng: point.lng.toFixed(6) });
+  }, [point]);
+
+  const reverseLookup = async (p: LatLng) => {
+    setBusy(true); setError(null);
+    const r = await nominatimReverse(p.lat, p.lng, 16);
+    setBusy(false);
+    if (!r.ok) { setError(r.message); setResult(null); return; }
+    setResult({ ...addressBreakdown(r.result.address), displayName: r.result.displayName });
+  };
+
+  // Auto-lookup when opening with URL coords
+  useEffect(() => {
+    if (point && mode !== "forward" && !result && !busy) reverseLookup(point);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const locate = async () => {
+    setBusy(true); setError(null);
+    try {
+      const p = await geolocation();
+      setPoint(p);
+      await reverseLookup(p);
+      mapRef.current?.flyTo({ center: [p.lng, p.lat], zoom: 15, essential: true });
+    } catch (e: any) {
+      setError(e?.message ?? "Could not determine your location.");
+    }
+  };
+
+  const setPointAndLookup = (p: LatLng) => {
+    setPoint(p);
+    reverseLookup(p);
+  };
+
+  useEffect(() => {
+    const map = mapRef.current, lib = libRef.current;
+    if (!map || !lib) return;
+    const target = mode === "forward" ? forward : point;
+    if (!target) return;
+    if (!markerRef.current) markerRef.current = new lib.Marker({ element: pinElement("#d95d32") }).setLngLat([target.lng, target.lat]).addTo(map);
+    else markerRef.current.setLngLat([target.lng, target.lat]);
+  }, [point, forward, mode]);
+
+  const breakdown = result ? [
+    ["Place / City", result.city], ["Suburb / Neighbourhood", result.suburb], ["Road", result.road ? `${result.houseNumber ? result.houseNumber + " " : ""}${result.road}` : ""],
+    [FOCUS_LABELS.county, result.county], [FOCUS_LABELS.state, result.state], ["Postcode", result.postcode], ["Country", result.country ? `${result.country}${result.countryCode ? ` (${result.countryCode})` : ""}` : ""],
+  ].filter(([, v]) => v) : [];
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-[400px,1fr]">
+      <div className="card order-2 space-y-4 p-4 lg:order-1">
+        {mode === "locate" && (
+          <button type="button" className="btn btn-primary w-full" onClick={locate} disabled={busy}>
+            {busy ? <Spinner label="Locating…" /> : "📍 Use my location"}
+          </button>
+        )}
+        {mode === "forward" ? (
+          <>
+            <Field label="Search a place or address">
+              <LocationSearch autoFocus placeholder="e.g. Brandenburg Gate, Berlin" onSelect={(h) => {
+                setForward({ lat: h.lat, lng: h.lng, label: h.label });
+                mapRef.current?.flyTo({ center: [h.lng, h.lat], zoom: 14, essential: true });
+              }} />
+            </Field>
+            {forward && (
+              <div className="space-y-2 border-t border-line pt-3">
+                <div className="text-sm font-semibold leading-snug">{forward.label}</div>
+                <Stat label="Coordinates" value={fmtCoords(forward)} />
+                <div className="flex flex-wrap gap-2">
+                  <CopyBtn text={fmtCoords(forward)} label="Copy coordinates" />
+                  <CopyBtn text={`${forward.lat}\n${forward.lng}`} label="Copy split" />
+                </div>
+                <a className="btn btn-ghost btn-sm" href={`/tools/coordinates-to-address?lat=${forward.lat}&lng=${forward.lng}`}>Reverse-geocode this point →</a>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Latitude">
+                <input className="input" inputMode="decimal" placeholder="40.7128" value={latIn} onChange={(e) => setLatIn(e.target.value)} />
+              </Field>
+              <Field label="Longitude">
+                <input className="input" inputMode="decimal" placeholder="-74.0060" value={lngIn} onChange={(e) => setLngIn(e.target.value)} />
+              </Field>
+            </div>
+            <button
+              type="button" className="btn btn-primary w-full"
+              onClick={() => {
+                const p = parseCoordPair(`${latIn}, ${lngIn}`);
+                if (!p) { setError("Latitude must be between −90 and 90, longitude between −180 and 180."); return; }
+                setPointAndLookup(p);
+                mapRef.current?.flyTo({ center: [p.lng, p.lat], zoom: 14, essential: true });
+              }}
+            >
+              Look up address
+            </button>
+            <p className="text-xs text-mute">Or click anywhere on the map. Coordinates can also be pasted as “lat, lng” in the latitude field.</p>
+            <input
+              className="sr-only" aria-hidden
+              onChange={(e) => { const p = parseCoordPair(e.target.value); if (p) { setLatIn(String(p.lat)); setLngIn(String(p.lng)); setPointAndLookup(p); } }}
+            />
+            {mode === "reverse" && (
+              <button type="button" className="btn btn-ghost w-full" onClick={locate} disabled={busy}>📍 …or use my location</button>
+            )}
+          </>
+        )}
+
+        {busy && <Spinner label="Looking up address…" />}
+        {error && <ErrorBox>{error}</ErrorBox>}
+
+        {result && !busy && (
+          <div className="space-y-2 border-t border-line pt-3">
+            <div className="text-sm leading-snug text-mute">{result.displayName}</div>
+            {focus && breakdown.find(([k]) => k === FOCUS_LABELS[focus]) && (
+              <div className="rounded-lg bg-brand-soft px-4 py-3">
+                <div className="text-[11px] font-bold uppercase tracking-wide text-mute">{FOCUS_LABELS[focus]}</div>
+                <div className="font-display text-xl font-bold text-brand-strong">{breakdown.find(([k]) => k === FOCUS_LABELS[focus])?.[1]}</div>
+              </div>
+            )}
+            <table className="tbl">
+              <tbody>
+                {breakdown.map(([k, v]) => (
+                  <tr key={k}>
+                    <td className="w-1/3 text-mute">{k}</td>
+                    <td className="font-medium">{v}</td>
+                    <td className="w-10"><CopyBtn text={v} label="" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {point && <CopyBtn text={result.displayName} label="Copy full address" />}
+          </div>
+        )}
+      </div>
+      <div className="order-1 lg:order-2">
+        <DynamicMap
+          center={point ?? { lat: 25, lng: 10 }} zoom={point ? 13 : 1.6} className="tall"
+          onReady={(map, lib) => {
+            mapRef.current = map; libRef.current = lib;
+            if (mode !== "forward") map.on("click", (e: any) => setPointAndLookup({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
+            if (point) {
+              markerRef.current = new lib.Marker({ element: pinElement("#d95d32") }).setLngLat([point.lng, point.lat]).addTo(map);
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+}

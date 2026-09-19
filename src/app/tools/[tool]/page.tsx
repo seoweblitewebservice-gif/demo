@@ -1,0 +1,72 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { toolBySlug, TOOLS, CATEGORIES } from "@/lib/registry";
+import { USER_FAQS } from "@/data/userFaqs";
+import ToolClient from "@/components/ToolClient";
+
+interface Props { params: Promise<{ tool: string }> }
+
+export function generateStaticParams() {
+  return TOOLS.map((t) => ({ tool: t.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { tool: slug } = await params;
+  const tool = toolBySlug.get(slug);
+  if (!tool) return {};
+  const url = `/tools/${tool.slug}`;
+  return {
+    title: tool.name,
+    description: tool.short,
+    alternates: { canonical: url },
+    openGraph: { title: `${tool.name} — Free Online Tool`, description: tool.short, url },
+    twitter: { title: `${tool.name} · MapForge`, description: tool.short },
+  };
+}
+
+export default async function ToolPage({ params }: Props) {
+  const { tool: slug } = await params;
+  const tool = toolBySlug.get(slug);
+  if (!tool) notFound();
+  const category = CATEGORIES.find((c) => c.id === tool.category);
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: tool.name,
+      description: tool.short,
+      url: `/tools/${tool.slug}`,
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any (web browser)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: tool.howTo,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+        { "@type": "ListItem", position: 2, name: "Tools", item: "/tools" },
+        ...(category ? [{ "@type": "ListItem", position: 3, name: category.label, item: `/tools?cat=${category.id}` }] : []),
+        { "@type": "ListItem", position: category ? 4 : 3, name: tool.name },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [...tool.faq, ...(USER_FAQS[tool.category] ?? [])].map(([q, a]) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ];
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ToolClient slug={tool.slug} />
+    </>
+  );
+}

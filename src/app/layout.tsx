@@ -1,0 +1,59 @@
+import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
+import Header, { Footer } from "@/components/Header";
+import SearchPalette from "@/components/SearchPalette";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://mapforge.tools"),
+  title: {
+    default: "MapForge — Free Maps & Geographic Tools",
+    template: "%s · MapForge",
+  },
+  description:
+    "Free, fast, browser-first geographic tools: distance and area calculators, radius maps, drive-time isochrones, coordinate converters, KML/GPX/GeoJSON viewers and more. No account needed.",
+  openGraph: {
+    type: "website",
+    siteName: "MapForge",
+    title: "MapForge — Free Maps & Geographic Tools",
+    description:
+      "Calculate distances, measure areas, create maps, explore geographic data and convert GPS files — instantly in your browser. Free, no account required.",
+  },
+  twitter: {
+    card: "summary",
+    title: "MapForge — Free Maps & Geographic Tools",
+    description: "Free browser-first geographic tools: distance, radius, routing, coordinates, map files and more.",
+  },
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f2e9" },
+    { media: "(prefers-color-scheme: dark)", color: "#14120e" },
+  ],
+};
+
+const themeScript = `(function(){try{var t=localStorage.getItem("sf-theme");var d=t? t==="dark" : false;document.documentElement.classList.toggle("dark",d);}catch(e){}})();`;
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="min-h-screen bg-canvas font-sans text-ink antialiased">
+        <Header />
+        <main id="main" className="container-sf py-6 sm:py-8">{children}</main>
+        <Footer />
+        <SearchPalette />
+      </body>
+    </html>
+  );
+}
