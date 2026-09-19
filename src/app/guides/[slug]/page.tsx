@@ -26,7 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: g.title,
     description: g.description,
     alternates: { canonical: `/guides/${g.slug}` },
-    openGraph: { title: g.title, description: g.description, type: "article" },
+    keywords: [g.title, "map guide", "geography guide", "GPS", "mapping"],
+    robots: { index: true, follow: true },
+    openGraph: { title: g.title, description: g.description, type: "article", url: `/guides/${g.slug}`, siteName: "MapForge" },
+    twitter: { card: "summary", title: g.title, description: g.description },
   };
 }
 
@@ -41,7 +44,21 @@ function Block({ b }: { b: GuideBlock }) {
       return <aside className="my-4 rounded-xl border border-brand/30 bg-brand-soft px-4 py-3 text-sm leading-relaxed text-brand-strong"><strong>Note: </strong>{b.text}</aside>;
     case "toolbox": {
       const tools = b.slugs.map((s) => toolBySlug.get(s)).filter(Boolean);
-      return (
+      const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: g.title,
+    description: g.description,
+    datePublished: g.date,
+    dateModified: g.date,
+    author: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
+    publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools", logo: { "@type": "ImageObject", url: "https://mapforge.tools/icon.svg" } },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://mapforge.tools/guides/${g.slug}` },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
         <div className="my-5 rounded-xl border border-line bg-card p-4 font-sans">
           <div className="text-[11px] font-extrabold uppercase tracking-widest text-mute">Tools used in this post</div>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
