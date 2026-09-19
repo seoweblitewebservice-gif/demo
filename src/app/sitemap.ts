@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { TOOLS } from "@/lib/registry";
 import { ALL_GUIDES } from "@/data/allGuides";
 import { LOCALES } from "@/lib/i18n";
+import { isToolLocalized } from "@/data/localizedTools";
 import countriesTopo from "world-atlas/countries-110m.json";
 
 const BASE = "https://www.mapbench.site";
@@ -53,7 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   }));
 
-  const localizedHome = LOCALES.map(locale => ({
+  const localizedHome = LOCALES.filter(locale => LOCALES.includes(locale)).map(locale => ({
     url: `${BASE}/${locale}`,
     changeFrequency: "weekly" as const,
     priority: 0.7,
