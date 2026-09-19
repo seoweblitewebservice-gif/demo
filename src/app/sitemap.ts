@@ -9,14 +9,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "", "/tools", "/maps", "/guides", "/about", "/methodology", "/data-sources", "/privacy", "/terms",
   ].map((path) => ({
     url: `${BASE}${path}`,
-    lastModified: new Date(),
     changeFrequency: path === "" ? "weekly" : "monthly",
     priority: path === "" ? 1 : path === "/tools" ? 0.9 : 0.6,
   }));
 
   const toolPages: MetadataRoute.Sitemap = TOOLS.map((t) => ({
     url: `${BASE}/tools/${t.slug}`,
-    lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: t.popular ? 0.8 : 0.7,
   }));
