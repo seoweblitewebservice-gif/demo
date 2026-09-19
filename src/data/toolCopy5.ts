@@ -49,20 +49,6 @@ export const COPY5: Record<string, { h2: string; paras: string[] }> = {
       "The math is exact and instant, running locally; the interesting part is the geography it reveals about how unevenly land is distributed. The result is copyable, shareable via URL, and one click away from a full address lookup of the opposite side. Teachers use it to make hemispheres concrete; travellers use it to find their 'opposite' for the photo meme. It pairs naturally with the great-circle calculator — the antipode is the unique point at the maximum possible surface distance, about 20,015 km away.",
     ],
   },
-  "earth-distance-calculator": {
-    h2: "Distance measured the planetary way",
-    paras: [
-      "This page frames the core distance engine for earth-science questions: any two points, the great-circle arc between them, and the result in a full unit table with bearing and midpoint alongside. The haversine formula on the WGS84 mean sphere keeps it correct across hemispheres, oceans and poles — the place where flat-map intuition fails hardest — and the methodology note quantifies the remaining gap to ellipsoidal geodesics at about 0.3%.",
-      "It is the companion to the antipode tool (the farthest possible pair), the horizon calculator (what height reveals what range) and the elevation tools (what the surface does between the points). Students verify textbook problems, radio hobbyists bound their links, and analysts get a defensible baseline distance with the formula documented on the methodology page. Everything computes locally in your browser; the URL preserves both endpoints so any figure can be reproduced and shared exactly.",
-    ],
-  },
-  "great-circle-calculator": {
-    h2: "The shortest path on a sphere, quantified",
-    paras: [
-      "Great circles are the geodesics of the sphere, and this calculator reports their full signature for any two points: arc distance, initial bearing and the way bearing evolves to its final value on arrival. That evolution is the conceptual payload — except on the equator or a meridian, following the shortest path means steering a slowly changing course, which is why flight tracks curve on flat charts and why this page exists to make the geometry visible.",
-      "Formulas are the standard spherical set — haversine distance, atan2 azimuths — on the WGS84 mean sphere, the same family used in aviation baselines and accurate to within roughly 0.3% of ellipsoidal geodesics. The nautical variant adds knots and passage time; the distance tools add units and midpoints; the map shows the line itself. For radio and visibility questions the same endpoints feed the line-of-sight calculator, and for pure curiosity the antipode tool shows the great circle stretched to its maximum.",
-    ],
-  },
   "sunrise-sunset-calculator": {
     h2: "Solar times for any place and date",
     paras: [
