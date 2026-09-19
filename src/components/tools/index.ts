@@ -12,6 +12,7 @@ const components: Record<string, () => Promise<{ default: ComponentType<{ params
   drivetime: () => import("./DriveTimeTool"),
   area: () => import("./AreaTool"),
   geocoder: () => import("./GeocoderTool"),
+  iplookup: () => import("./IpLookupTool"),
   latlong: () => import("./LatLongTool"),
   converter: () => import("./ConverterTool"),
   fileviewer: () => import("./FileViewer"),
