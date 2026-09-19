@@ -18,9 +18,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: tool.name,
     description: tool.short,
+    keywords: tool.keywords,
     alternates: { canonical: url },
-    openGraph: { title: `${tool.name} — Free Online Tool`, description: tool.short, url },
-    twitter: { title: `${tool.name} · MapForge`, description: tool.short },
+    robots: { index: true, follow: true },
+    openGraph: { type: "website", title: `${tool.name} — Free Online Tool`, description: tool.short, url, siteName: "MapForge" },
+    twitter: { card: "summary", title: `${tool.name} · MapForge`, description: tool.short },
   };
 }
 
@@ -34,11 +36,13 @@ export default async function ToolPage({ params }: Props) {
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
+      "@id": `${url}#tool`,
       name: tool.name,
       description: tool.short,
       url: `/tools/${tool.slug}`,
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Any (web browser)",
+      isAccessibleForFree: true,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       featureList: tool.howTo,
     },
