@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "The terms under which MapForge's free geographic tools are provided, including acceptable use of the underlying open data services.",
+  description: "The terms under which MapBench's free geographic tools are provided, including acceptable use of the underlying open data services.",
   alternates: { canonical: "/terms" },
 };
 
@@ -13,7 +13,7 @@ export default function TermsPage() {
       <p className="mt-2 text-sm text-mute">Last updated: September 2026</p>
       <div className="prose-sf mt-6">
         <h2>1. The service</h2>
-        <p>MapForge provides free, browser-based geographic tools ("the service") without charge and without accounts. The service is provided "as is", without warranty of any kind, express or implied, including fitness for a particular purpose.</p>
+        <p>MapBench provides free, browser-based geographic tools ("the service") without charge and without accounts. The service is provided "as is", without warranty of any kind, express or implied, including fitness for a particular purpose.</p>
         <h2>2. Not for critical decisions</h2>
         <p>Results are computed from open datasets of varying age and precision. Do not rely on the service for navigation, aviation, maritime safety, legal boundary determination, emergency response or any use where an error could cause harm or liability. Consult authoritative sources and licensed survey data for those purposes.</p>
         <h2>3. Fair use of upstream services</h2>
