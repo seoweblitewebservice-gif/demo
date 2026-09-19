@@ -6,7 +6,7 @@ import { feature } from "topojson-client";
 import countriesTopo from "world-atlas/countries-110m.json";
 
 function slugify(value: string) {
-  return value.normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
 type CountryFeature = GeoJSON.Feature<GeoJSON.Geometry, { name?: string }>;
