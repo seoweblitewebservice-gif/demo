@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
     description: `Free printable ${name} blank map with SVG and high-resolution PNG exports. Explore outline, labeled, colored and city map variants.`,
     alternates: { canonical: `/maps/blank/${country}` },
     openGraph: {
-      title: `${name} Blank Map — SVG & PNG | MapForge`,
+      title: `${name} Blank Map — SVG & PNG | MapBench`,
       description: `Explore and export a printable ${name} map in your browser.`,
       type: "website",
     },
@@ -80,7 +80,7 @@ export default async function CountryMapPage({ params }: { params: Promise<{ cou
     ["/tools/crow-flies-distance", "Great-Circle Distance"],
   ] as const;
 
-  const pageUrl = `https://mapforge.tools/maps/blank/${country}`;
+  const pageUrl = `https://www.mapbench.site/maps/blank/${country}`;
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -88,14 +88,14 @@ export default async function CountryMapPage({ params }: { params: Promise<{ cou
       headline: `${name} Blank Map — SVG & PNG`,
       description: `Printable ${name} outline map with browser-based SVG and PNG export options.`,
       mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
-      publisher: { "@type": "Organization", name: "MapForge", url: "https://mapforge.tools" },
+      publisher: { "@type": "Organization", name: "MapBench", url: "https://www.mapbench.site" },
     },
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://mapforge.tools/" },
-        { "@type": "ListItem", position: 2, name: "Maps", item: "https://mapforge.tools/maps" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.mapbench.site/" },
+        { "@type": "ListItem", position: 2, name: "Maps", item: "https://www.mapbench.site/maps" },
         { "@type": "ListItem", position: 3, name: `${name} Blank Map`, item: pageUrl },
       ],
     },
@@ -136,7 +136,7 @@ export default async function CountryMapPage({ params }: { params: Promise<{ cou
       <section className="doc mx-auto mt-10 max-w-3xl">
         <h2 className="sect-h">About the {name} map</h2>
         <p>
-          MapForge generates this country map from the bundled Natural Earth-derived country geometry used by the
+          MapBench generates this country map from the bundled Natural Earth-derived country geometry used by the
           site. Because the geometry is geographic rather than a screenshot, the map can be rendered at different
           sizes and exported without depending on a remote image URL.
         </p>
