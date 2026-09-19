@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Free Map Tools & Blank Maps",
   description: "Free online map and geographic tools for distance, area, radius, routing, coordinates, elevation, GPS files and printable blank maps. No account required.",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: { en: "https://www.mapbench.site/", "x-default": "https://www.mapbench.site/", ...Object.fromEntries(["es","de","fr","it","pt","nl","pl","ru","sv","da","no","fi","cs","ro","el","hu","tr","uk","ar","ja","ko","zh","hi"].map(l => [l, `https://www.mapbench.site/${l}`])) } },
 };
 
 import { CATEGORIES, TOOLS } from "@/lib/registry";
