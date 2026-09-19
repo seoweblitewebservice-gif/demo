@@ -53,7 +53,7 @@ async function valhallaRoute(points: LatLng[], mode: TravelMode): Promise<RouteR
   const data = await res.json();
   const trip = data.trip;
   if (!trip || trip.status !== 0) return { ok: false, message: "No route was found between these points." };
-  const shape = decodePolyline(trip.legs.map((l: any) => l.shape).join(""), 6);
+  const shape = trip.legs.flatMap((l: any, i: number) => {\n    const leg = decodePolyline(l.shape, 6);\n    return i === 0 ? leg : leg.slice(1);\n  });
   const legs: RouteLeg[] = trip.legs.map((l: any) => ({ distanceKm: l.summary.length, durationS: l.summary.time }));
   return { ok: true, shape, distanceKm: trip.summary.length, durationS: trip.summary.time, legs, provider: "valhalla" };
 }
@@ -99,7 +99,7 @@ export async function optimizedOrder(points: LatLng[], mode: TravelMode): Promis
     const trip = data.trip;
     if (!trip || trip.status !== 0) return { ok: false, message: "No optimized route was found." };
     const order = trip.locations.map((l: any) => points[l.original_index]);
-    const shape = decodePolyline(trip.legs.map((l: any) => l.shape).join(""), 6);
+    const shape = trip.legs.flatMap((l: any, i: number) => {\n      const leg = decodePolyline(l.shape, 6);\n      return i === 0 ? leg : leg.slice(1);\n    });
     return {
       ok: true, ordered: order,
       result: {
