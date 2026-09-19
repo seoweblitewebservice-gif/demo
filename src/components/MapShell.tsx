@@ -46,6 +46,8 @@ export default function MapShell({
 
   useEffect(() => {
     if (!el.current || mapRef.current) return;
+    maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+
     const map = new maplibregl.Map({
       container: el.current,
       style: PRIMARY_STYLE,
