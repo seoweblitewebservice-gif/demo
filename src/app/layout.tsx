@@ -46,6 +46,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": "WebSite", "@id": "https://mapforge.tools/#website", name: "MapForge", url: "https://mapforge.tools", description: "Free browser-based map and geographic tools." },
+            { "@type": "Organization", "@id": "https://mapforge.tools/#organization", name: "MapForge", url: "https://mapforge.tools", logo: { "@type": "ImageObject", url: "https://mapforge.tools/icon.svg" } }
+          ]
+        }) }} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
