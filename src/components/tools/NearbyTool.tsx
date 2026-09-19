@@ -54,9 +54,10 @@ export default function NearbyTool() {
         .map((e: any) => ({
           name: e.tags?.name || e.tags?.operator || catLabel(cat),
           lat: e.lat ?? e.center?.lat, lng: e.lon ?? e.center?.lon, tags: e.tags ?? {},
-          distKm: distanceKm(center, { lat: e.lat, lng: e.lon }),
-          bearing: bearingBetween(center, { lat: e.lat, lng: e.lon }),
+          distKm: distanceKm(center, { lat: e.lat ?? e.center?.lat, lng: e.lon ?? e.center?.lon }),
+          bearing: bearingBetween(center, { lat: e.lat ?? e.center?.lat, lng: e.lon ?? e.center?.lon }),
         }))
+        .filter((p: Poi) => Number.isFinite(p.lat) && Number.isFinite(p.lng))
         .sort((a: Poi, b: Poi) => a.distKm - b.distKm);
       setPois(list);
     } catch {
