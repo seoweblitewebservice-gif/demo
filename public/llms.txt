@@ -1,21 +1,21 @@
-# MapForge
+# MapBench
 
-> MapForge is a free browser-based platform for geographic calculations, interactive maps, routing, coordinate conversion, map files, and printable blank maps.
+> MapBench is a free browser-based platform for geographic calculations, interactive maps, routing, coordinate conversion, map files, and printable blank maps.
 
 ## Core pages
 
-- Homepage: https://mapforge.tools/
-- All tools: https://mapforge.tools/tools
-- Blank maps: https://mapforge.tools/maps
-- Guides: https://mapforge.tools/guides
-- About: https://mapforge.tools/about
-- Methodology: https://mapforge.tools/methodology
-- Data sources: https://mapforge.tools/data-sources
-- Contact: https://mapforge.tools/contact
-- Privacy: https://mapforge.tools/privacy
-- Terms: https://mapforge.tools/terms
+- Homepage: https://www.mapbench.site/
+- All tools: https://www.mapbench.site/tools
+- Blank maps: https://www.mapbench.site/maps
+- Guides: https://www.mapbench.site/guides
+- About: https://www.mapbench.site/about
+- Methodology: https://www.mapbench.site/methodology
+- Data sources: https://www.mapbench.site/data-sources
+- Contact: https://www.mapbench.site/contact
+- Privacy: https://www.mapbench.site/privacy
+- Terms: https://www.mapbench.site/terms
 
-## What MapForge provides
+## What MapBench provides
 
 - Distance, bearing and midpoint calculations
 - Radius and area measurements
@@ -30,7 +30,7 @@
 
 ## Method and data
 
-MapForge documents calculation methods and known limitations on its Methodology page. Geographic data sources and licences are documented on the Data Sources page. Results that are estimates are labelled as estimates rather than presented as authoritative measurements.
+MapBench documents calculation methods and known limitations on its Methodology page. Geographic data sources and licences are documented on the Data Sources page. Results that are estimates are labelled as estimates rather than presented as authoritative measurements.
 
 ## Important limitations
 
@@ -40,4 +40,4 @@ Routing times are free-flow estimates, not live traffic. Population tools use cu
 
 Individual tool pages contain a direct answer, tool description, methodology, worked examples, related questions, glossary, FAQs, and structured data. Country map pages contain country-specific map information, geographic statistics, FAQs and related tools.
 
-For current URLs and crawl directives, use https://mapforge.tools/robots.txt and https://mapforge.tools/sitemap.xml.
+For current URLs and crawl directives, use https://www.mapbench.site/robots.txt and https://www.mapbench.site/sitemap.xml.
