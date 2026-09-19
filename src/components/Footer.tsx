@@ -59,7 +59,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-[#3a3428] py-4">
         <div className="container-sf flex flex-col items-center justify-between gap-2 font-serif text-xs text-[#8d8574] sm:flex-row">
-          <span>© {new Date().getFullYear()} MapForge · Free geographic tools for everyone.</span>
+          <span>© {new Date().getFullYear()} MapBench · Free geographic tools for everyone.</span>
           <span>Data: US Census Bureau · Natural Earth · OpenStreetMap</span>
         </div>
       </div>
