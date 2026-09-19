@@ -8,32 +8,32 @@ export const metadata: Metadata = {
   verification: {
     google: "f3UG9hYpRPornzaXrqA_IODC_j9gS_1bVdqxh-4AjAk",
   },
-  metadataBase: new URL("https://mapforge.tools"),
+  metadataBase: new URL("https://www.mapbench.site"),
   title: {
-    default: "MapForge — Free Maps & Geographic Tools",
-    template: "%s · MapForge",
+    default: "MapBench — Free Maps & Geographic Tools",
+    template: "%s · MapBench",
   },
   description:
     "Free browser-based map and geographic tools for distance, area, radius, routing, coordinates, elevation, blank maps and GPS files. No account required.",
-  applicationName: "MapForge",
+  applicationName: "MapBench",
   category: "geographic tools",
   keywords: ["map tools", "geographic tools", "distance calculator", "area calculator", "coordinate converter", "GPS tools", "blank maps"],
   openGraph: {
     type: "website",
-    siteName: "MapForge",
-    title: "MapForge — Free Maps & Geographic Tools",
+    siteName: "MapBench",
+    title: "MapBench — Free Maps & Geographic Tools",
     description:
       "Calculate distances, measure areas, create maps, explore geographic data and convert GPS files — instantly in your browser. Free, no account required.",
   },
   twitter: {
     card: "summary",
-    title: "MapForge — Free Maps & Geographic Tools",
+    title: "MapBench — Free Maps & Geographic Tools",
     description: "Free browser-first geographic tools: distance, radius, routing, coordinates, map files and more.",
   },
   robots: { index: true, follow: true },
-  authors: [{ name: "MapForge" }],
-  creator: "MapForge",
-  publisher: "MapForge",
+  authors: [{ name: "MapBench" }],
+  creator: "MapBench",
+  publisher: "MapBench",
 };
 
 export const viewport: Viewport = {
@@ -52,8 +52,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "WebSite", "@id": "https://mapforge.tools/#website", name: "MapForge", url: "https://mapforge.tools", description: "Free browser-based map and geographic tools." },
-            { "@type": "Organization", "@id": "https://mapforge.tools/#organization", name: "MapForge", url: "https://mapforge.tools", logo: { "@type": "ImageObject", url: "https://mapforge.tools/icon.svg" } }
+            { "@type": "WebSite", "@id": "https://www.mapbench.site/#website", name: "MapBench", url: "https://www.mapbench.site", description: "Free browser-based map and geographic tools." },
+            { "@type": "Organization", "@id": "https://www.mapbench.site/#organization", name: "MapBench", url: "https://www.mapbench.site", logo: { "@type": "ImageObject", url: "https://www.mapbench.site/icon.svg" } }
           ]
         }) }} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
