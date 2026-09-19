@@ -11,7 +11,7 @@ export function Logo() {
         <path d="M16 3c-5 0-9 4-9 8.9 0 6.5 7.4 14.4 8.4 15.5a.8.8 0 0 0 1.2 0c1-1.1 8.4-9 8.4-15.5C25 7 21 3 16 3Z" fill="var(--sf-brand)" />
         <circle cx="16" cy="12" r="3.4" fill="var(--sf-card)" />
       </svg>
-      map<span className="text-brand">forge</span>
+      map<span className="text-brand">bench</span>
     </span>
   );
 }
