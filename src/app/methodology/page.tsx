@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Methodology — How MapForge Calculates",
-  description: "The formulas and algorithms behind MapForge: haversine distances, spherical-excess areas, NOAA solar times, UTM/MGRS conversions and elevation line-of-sight checks.",
+  title: "Methodology — How MapBench Calculates",
+  description: "The formulas and algorithms behind MapBench: haversine distances, spherical-excess areas, NOAA solar times, UTM/MGRS conversions and elevation line-of-sight checks.",
   alternates: { canonical: "/methodology" },
 };
 
@@ -27,7 +27,7 @@ export default function MethodologyPage() {
     <div className="mx-auto max-w-4xl">
       <h1 className="font-display text-3xl font-bold tracking-tight">Methodology</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mute">
-        Every number MapForge shows you has a documented recipe. This page lists them — and their honest limits.
+        Every number MapBench shows you has a documented recipe. This page lists them — and their honest limits.
       </p>
       <div className="mt-6 overflow-x-auto">
         <table className="tbl min-w-[640px]">
