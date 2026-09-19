@@ -48,6 +48,12 @@ export default async function ToolPage({ params }: Props) {
     },
     {
       "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "MapForge",
+      url: "https://mapforge.tools",
+    },
+    {
+      "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: "/" },
