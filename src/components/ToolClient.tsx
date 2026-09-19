@@ -6,14 +6,17 @@ import { USER_FAQS } from "@/data/userFaqs";
 import ToolContent from "./ToolContent";
 import { toolComponents } from "./tools";
 import { Spinner } from "./ui";
+import { getLocalizedTool } from "@/data/localizedTools";
+import type { Locale } from "@/lib/i18n";
 
-export default function ToolClient({ slug }: { slug: string }) {
+export default function ToolClient({ slug, locale }: { slug: string; locale?: Locale }) {
   const tool = toolBySlug.get(slug);
+  const localized = locale ? getLocalizedTool(locale, slug) : undefined;
   if (!tool) return null;
   const category = CATEGORIES.find((c) => c.id === tool.category);
   const Component = toolComponents[tool.component];
   const related = tool.related.map((s) => toolBySlug.get(s)).filter((t): t is ToolDef => !!t && t.slug !== slug).slice(0, 6);
-  const faqs: [string, string][] = [...tool.faq, ...(USER_FAQS[tool.category] ?? [])];
+  const faqs: [string, string][] = localized ? [...localized.faq, ...(USER_FAQS[tool.category] ?? [])] : [...tool.faq, ...(USER_FAQS[tool.category] ?? [])];
 
   return (
     <div>
@@ -30,8 +33,8 @@ export default function ToolClient({ slug }: { slug: string }) {
 
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{tool.name}</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mute">{tool.intro}</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{localized?.name ?? tool.name}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mute">{localized?.intro ?? tool.intro}</p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
           <span className="chip chip-brand">Free</span>
@@ -60,7 +63,7 @@ export default function ToolClient({ slug }: { slug: string }) {
           <section aria-labelledby="howto">
             <h2 id="howto" className="font-display text-xl font-bold">How to use</h2>
             <ol className="mt-3 space-y-2.5">
-              {tool.howTo.map((step, i) => (
+              {(localized?.howTo ?? tool.howTo).map((step, i) => (
                 <li key={i} className="flex gap-3 text-sm leading-relaxed text-mute">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">{i + 1}</span>
                   {step}
@@ -72,7 +75,7 @@ export default function ToolClient({ slug }: { slug: string }) {
           {tool.method && (
             <section aria-labelledby="method">
               <h2 id="method" className="font-display text-xl font-bold">Methodology & accuracy</h2>
-              <p className="mt-2 text-sm leading-relaxed text-mute">{tool.method} Read more on the <Link href="/methodology" className="font-semibold text-brand-strong hover:underline">methodology page</Link>.</p>
+              <p className="mt-2 text-sm leading-relaxed text-mute">{localized?.method ?? tool.method} Read more on the <Link href="/methodology" className="font-semibold text-brand-strong hover:underline">methodology page</Link>.</p>
             </section>
           )}
 
