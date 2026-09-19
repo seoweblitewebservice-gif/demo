@@ -28,7 +28,7 @@ function fmtCoord(value: number) {
 }
 
 function countryStats(country: CountryFeature) {
-  const [west, south, east, north] = geoBounds(country);
+  const [[west, south], [east, north]] = geoBounds(country);
   const [lon, lat] = geoCentroid(country);
   const sphericalArea = geoArea(country);
   const areaKm2 = (sphericalArea / (4 * Math.PI)) * 510072000;
