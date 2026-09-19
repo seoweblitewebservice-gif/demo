@@ -68,7 +68,7 @@ export function FuelCostTool() {
   };
 
   const distKm = basis === "road" ? roadKm : straightKm;
-  const litres = distKm !== null ? (unit === "l100" ? (distKm * consumption) / 100 : distKm / (mpg * 0.425144) * 3.78541) : null;
+  const litres = distKm !== null ? (unit === "l100" ? (distKm * consumption) / 100 : (distKm * 0.621371 / mpg) * 3.78541) : null;
   const cost = litres !== null ? litres * (unit === "l100" ? price : perGal) : null;
 
   return (
