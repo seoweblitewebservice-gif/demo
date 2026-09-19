@@ -15,6 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const tool = toolBySlug.get(slug);
   if (!tool) return {};
   const url = `/tools/${tool.slug}`;
+  const absoluteUrl = `https://mapforge.tools${url}`;
   return {
     title: tool.name,
     description: tool.short,
@@ -36,10 +37,10 @@ export default async function ToolPage({ params }: Props) {
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "@id": `${url}#tool`,
+      "@id": `${absoluteUrl}#tool`,
       name: tool.name,
       description: tool.short,
-      url: `/tools/${tool.slug}`,
+      url: absoluteUrl,
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Any (web browser)",
       isAccessibleForFree: true,
