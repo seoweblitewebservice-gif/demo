@@ -15,6 +15,9 @@ const localizedToolAlternates = (path: string, slug: string) => Object.fromEntri
   ...LOCALES.filter(locale => isToolLocalized(locale, slug)).map(locale => [locale, `${BASE}/${locale}${path}`]),
 ]);
 
+// Backward-compatible alias so stale references cannot break the build.
+const localized = localizedToolAlternates;
+
 const countryPages = Array.from(
   new Set(
     ((countriesTopo as any).objects.countries.geometries as any[])
