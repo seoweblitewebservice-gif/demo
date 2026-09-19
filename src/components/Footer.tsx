@@ -40,7 +40,7 @@ export default function Footer() {
     <footer className="mt-16 bg-[#221d15] text-[#d9d2c0]">
       <div className="container-sf grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-1">
-          <div className="font-display text-lg font-bold text-[#f3edda]">map<span className="text-[#7cc39d]">forge</span></div>
+          <div className="font-display text-lg font-bold text-[#f3edda]">map<span className="text-[#7cc39d]">bench</span></div>
           <p className="mt-3 font-serif text-sm leading-relaxed text-[#a89f8c]">
             Free interactive map tools and printable blank maps, built on open data. No accounts, no uploads.
           </p>
