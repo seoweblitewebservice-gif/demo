@@ -8,6 +8,7 @@ import { MAJOR_CITIES } from "@/data/cities";
 import { downloadDataUrl, downloadText } from "@/lib/formats";
 import { readUrlParams } from "./ui";
 import { Seg, Spinner } from "./ui";
+import Link from "next/link";
 
 type Variant = "blank" | "labeled" | "colored" | "cities";
 
@@ -85,7 +86,7 @@ function svgFor(item: MapItem, variant: Variant, w: number, h: number, allFeatur
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"><rect width="${w}" height="${h}" fill="#ffffff"/>${inner}</svg>`;
 }
 
-export default function BlankMapMaker() {
+export default function BlankMapMaker({ initialMapSlug }: { initialMapSlug?: string }) {
   const countries: MapItem[] = useMemo(() => {
     const fc = feature(countriesTopo as any, (countriesTopo as any).objects.countries) as unknown as GeoJSON.FeatureCollection;
     return (fc.features as any[])
@@ -134,7 +135,7 @@ export default function BlankMapMaker() {
   const [sel, setSel] = useState<MapItem>(world);
   const [variant, setVariant] = useState<Variant>("blank");
   const detailRef = useRef<HTMLDivElement>(null);
-  const [paramSel] = useState(() => readUrlParams().get("map"));
+  const [paramSel] = useState(() => initialMapSlug ?? readUrlParams().get("map"));
 
   // Deep links: /maps?map=s-California, c-India, cont-europe, us, world
   useEffect(() => {
@@ -154,7 +155,8 @@ export default function BlankMapMaker() {
     return [usNation, world, byName("India"), byName("Brazil"), byName("Australia"), byName("France")].filter(Boolean) as MapItem[];
   }, [countries, usNation, world]);
 
-  const slug = sel.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const slugify = (value: string) => value.normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug = slugify(sel.name);
 
   return (
     <div className="space-y-8">
