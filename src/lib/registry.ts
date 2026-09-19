@@ -1661,7 +1661,7 @@ export const TOOLS: ToolDef[] = [
     short: "Your height + your terrain's elevation = how far the horizon sits, and how far two of you could spot each other.",
     intro: "Stand anywhere, add your eye height to the ground elevation you enter (or look up with the Elevation Finder), and get the distance to your horizon with standard refraction — plus the classic ship-to-ship visibility sum.",
     category: "earth", scope: "Worldwide", component: "horizon",
-    keywords: ["how far can i see", "horizon distance", "visibility", "view distance"],
+    keywords: ["how far can i see", "how far can i see from here", "horizon distance", "visibility", "view distance"],
     faq: [
       ["Does it include mountains in between?", "This is the curvature horizon over open ground; real sightlines over terrain are the Line-of-Sight tool's job."],
       ["Why does refraction matter?", "Air density bends light slightly downward, extending the geometric horizon ~8% in standard air."],
