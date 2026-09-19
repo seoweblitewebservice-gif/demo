@@ -61,7 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: t.popular ? 0.65 : 0.55,
       alternates: {
-        languages: localized(`/tools/${t.slug}`),
+        languages: localizedToolAlternates(`/tools/${t.slug}`, t.slug),
       },
     }))
   );
