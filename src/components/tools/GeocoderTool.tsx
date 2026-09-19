@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Map as MLMap } from "maplibre-gl";
 import { fmtCoords, isValidLat, isValidLng, parseCoordPair, type LatLng } from "@/lib/geo";
-import { addressBreakdown, geolocation, nominatimReverse } from "@/lib/geocode";
+import { addressBreakdown, geolocation, geolocationDetails, nominatimReverse } from "@/lib/geocode";
 import { readUrlParams, syncUrl, CopyBtn, ErrorBox, Spinner, Stat, Field } from "@/components/ui";
 import { DynamicMap, pinElement, PlaceField, type PlaceValue } from "./shared";
 import LocationSearch from "@/components/LocationSearch";
@@ -30,6 +30,8 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ReturnType<typeof addressBreakdown> & { displayName: string } | null>(null);
   const [countryMeta, setCountryMeta] = useState<CountryMeta | null>(null);
+  const [locationDetails, setLocationDetails] = useState<{accuracy:number;timestamp:number;altitude?:number|null;speed?:number|null} | null>(null);
+  const [ipFallback, setIpFallback] = useState<{ip:string;city?:string;region?:string;country?:string;org?:string} | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const libRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -63,16 +65,26 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
   }, []);
 
   const locate = async () => {
-    setBusy(true); setError(null);
+    setBusy(true); setError(null); setIpFallback(null);
     try {
-      const p = await geolocation();
+      const d = await geolocationDetails();
+      const p = { lat: d.lat, lng: d.lng };
+      setLocationDetails(d);
       setPoint(p);
       await reverseLookup(p);
       mapRef.current?.flyTo({ center: [p.lng, p.lat], zoom: 15, essential: true });
     } catch (e: any) {
-      setError(e?.message ?? "Could not determine your location.");
+      try {
+        const res = await fetch("https://ipwho.is/");
+        const data = await res.json();
+        if (data?.success && Number.isFinite(data.latitude) && Number.isFinite(data.longitude)) {
+          const p = { lat: Number(data.latitude), lng: Number(data.longitude) };
+          setPoint(p); setIpFallback({ ip: data.ip, city: data.city, region: data.region, country: data.country, org: data.connection?.org });
+          await reverseLookup(p);
+          setError("Precise browser location was unavailable, so this is an approximate IP-based location.");
+        } else setError(e?.message ?? "Could not determine your location.");
+      } catch { setError(e?.message ?? "Could not determine your location."); }
     }
-  };
 
   const setPointAndLookup = (p: LatLng) => {
     setPoint(p);
@@ -166,6 +178,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
                 <div className="font-display text-xl font-bold text-brand-strong">{breakdown.find(([k]) => k === FOCUS_LABELS[focus])?.[1]}</div>
               </div>
             )}
+            {locationDetails && mode === "locate" && <div className="grid grid-cols-2 gap-2 rounded-lg bg-brand-soft p-3"><Stat label="GPS accuracy" value={`±${Math.round(locationDetails.accuracy)} m`} /><Stat label="Updated" value={new Date(locationDetails.timestamp).toLocaleTimeString()} />{locationDetails.altitude != null && <Stat label="Altitude" value={`${Math.round(locationDetails.altitude)} m`} />}{locationDetails.speed != null && locationDetails.speed >= 0 && <Stat label="Speed" value={`${(locationDetails.speed * 3.6).toFixed(1)} km/h`} />}</div>}{ipFallback && <div className="rounded-lg border border-line bg-well px-3 py-2 text-xs text-mute"><strong>Approximate IP location</strong><div className="mt-1">{ipFallback.city}, {ipFallback.region}, {ipFallback.country}{ipFallback.org ? ` · ${ipFallback.org}` : ""}</div></div>}
             <table className="tbl">
               <tbody>
                 {breakdown.map(([k, v]) => (
