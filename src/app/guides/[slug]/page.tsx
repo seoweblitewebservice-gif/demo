@@ -44,6 +44,7 @@ function Block({ b }: { b: GuideBlock }) {
       return <aside className="my-4 rounded-xl border border-brand/30 bg-brand-soft px-4 py-3 text-sm leading-relaxed text-brand-strong"><strong>Note: </strong>{b.text}</aside>;
     case "toolbox": {
       const tools = b.slugs.map((s) => toolBySlug.get(s)).filter(Boolean);
+      return (
         <div className="my-5 rounded-xl border border-line bg-card p-4 font-sans">
           <div className="text-[11px] font-extrabold uppercase tracking-widest text-mute">Tools used in this post</div>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
