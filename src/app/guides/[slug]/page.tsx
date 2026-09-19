@@ -66,6 +66,7 @@ export default async function GuidePage({ params }: Props) {
   const g = allGuideBySlug.get(slug);
   if (!g) notFound();
   const others = ALL_GUIDES.filter((x) => x.slug !== slug);
+  const related = ALL_GUIDES.filter((x) => x.slug !== slug && x.blocks.some((b) => b.t === "toolbox" && b.slugs.some((s) => toolboxSlugs.includes(s))));
 
   // ---- Long-form depth engine: compose original editorial sections until the
   // ---- post lands inside the 2,000–2,500 word window.
@@ -212,8 +213,8 @@ export default async function GuidePage({ params }: Props) {
       <div className="mt-10 border-t border-line pt-6 font-sans">
         <h2 className="font-display text-lg font-bold">Keep reading</h2>
         <ul className="mt-3 space-y-2">
-          {others.slice(0, 4).map((o) => (
-            <li key={o.slug}><Link href={`/guides/${o.slug}`} className="text-sm font-bold text-brand-strong hover:underline">→ {o.title}</Link></li>
+          {related.slice(0, 4).map((o) => (
+            <li key={o.slug}><Link href={`/guides/${o.slug}`} className="text-sm font-bold text-brand-strong hover:underline">→ {o.title}</Link><span className="ml-2 text-xs text-mute">Related guide</span></li>
           ))}
         </ul>
       </div>
