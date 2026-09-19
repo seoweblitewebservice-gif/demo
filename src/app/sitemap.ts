@@ -1,8 +1,15 @@
 import type { MetadataRoute } from "next";
 import { TOOLS } from "@/lib/registry";
 import { ALL_GUIDES } from "@/data/allGuides";
+import countriesTopo from "world-atlas/countries-110m.json";
 
 const BASE = "https://mapforge.tools";
+const slugify = (value: string) => value.normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const countryPages = Array.from(new Set(((countriesTopo as any).objects.countries.geometries as any[]).map((g) => g.properties?.name).filter(Boolean))).map((name) => ({
+  url: `${BASE}/maps/blank/${slugify(name)}`,
+  changeFrequency: "monthly" as const,
+  priority: 0.7,
+}));
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
@@ -26,5 +33,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...staticPages, ...toolPages, ...guidePages];
+  return [...staticPages, ...toolPages, ...guidePages, ...countryPages];
 }
