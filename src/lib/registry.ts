@@ -703,7 +703,7 @@ export const TOOLS: ToolDef[] = [
     short: "Convert between latitude/longitude and UTM (zone, easting, northing) in both directions.",
     intro: "Full WGS84 UTM conversion including the Norway/Svalbard zone exceptions. Paste either representation and get the other — plus a map preview.",
     category: "coordinates", scope: "Worldwide", component: "converter", props: { focus: "utm" },
-    keywords: ["utm", "easting", "northing", "utm zone", "convert utm"],
+    keywords: ["utm converter", "utm", "easting", "northing", "utm zone", "convert utm", "latitude longitude to utm"],
     faq: [
       ["What datum do you use?", "WGS84 — the same datum as GPS. If your source is NAD27 or another datum, convert datums first."],
       ["Why does my zone look wrong near Norway?", "Zones 31–37 are widened around Norway and Svalbard by international convention. We implement the official exceptions."],
@@ -835,7 +835,7 @@ export const TOOLS: ToolDef[] = [
     short: "Turn a spreadsheet of lat/lng rows into an interactive map — clustering, colouring and export included.",
     intro: "Upload or paste a CSV with latitude and longitude columns and get an instant interactive map. Auto-detection finds your coordinate columns; category colouring and clustering handle thousands of rows.",
     category: "files", scope: "Worldwide", component: "csv",
-    keywords: ["csv map", "spreadsheet to map", "plot csv", "csv to geojson", "data map"],
+    keywords: ["csv to map", "csv map", "spreadsheet to map", "plot csv", "csv to geojson", "data map", "csv mapping tool"],
     popular: true,
     faq: [
       ["Is my data uploaded?", "Never. Parsing, clustering and rendering all happen locally in your browser."],
