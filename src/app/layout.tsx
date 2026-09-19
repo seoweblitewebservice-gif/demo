@@ -5,6 +5,9 @@ import SearchPalette from "@/components/SearchPalette";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  verification: {
+    google: "f3UG9hYpRPornzaXrqA_IODC_j9gS_1bVdqxh-4AjAk",
+  },
   metadataBase: new URL("https://mapforge.tools"),
   title: {
     default: "MapForge — Free Maps & Geographic Tools",
