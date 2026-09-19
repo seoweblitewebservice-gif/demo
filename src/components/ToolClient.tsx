@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useMemo } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { toolBySlug, CATEGORIES, type ToolDef } from "@/lib/registry";
 import { USER_FAQS } from "@/data/userFaqs";
