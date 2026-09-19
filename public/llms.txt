@@ -1,0 +1,43 @@
+# MapForge
+
+> MapForge is a free browser-based platform for geographic calculations, interactive maps, routing, coordinate conversion, map files, and printable blank maps.
+
+## Core pages
+
+- Homepage: https://mapforge.tools/
+- All tools: https://mapforge.tools/tools
+- Blank maps: https://mapforge.tools/maps
+- Guides: https://mapforge.tools/guides
+- About: https://mapforge.tools/about
+- Methodology: https://mapforge.tools/methodology
+- Data sources: https://mapforge.tools/data-sources
+- Contact: https://mapforge.tools/contact
+- Privacy: https://mapforge.tools/privacy
+- Terms: https://mapforge.tools/terms
+
+## What MapForge provides
+
+- Distance, bearing and midpoint calculations
+- Radius and area measurements
+- Road routing and drive-time isochrones
+- Latitude/longitude, DMS, UTM, MGRS and Plus Code tools
+- Reverse and forward geocoding
+- KML, GPX, GeoJSON and CSV map-file tools
+- Printable blank world, country and US maps
+- Elevation, horizon and line-of-sight calculations
+- Sunrise, sunset, day-length and lunar tools
+- Geographic-line and population tools
+
+## Method and data
+
+MapForge documents calculation methods and known limitations on its Methodology page. Geographic data sources and licences are documented on the Data Sources page. Results that are estimates are labelled as estimates rather than presented as authoritative measurements.
+
+## Important limitations
+
+Routing times are free-flow estimates, not live traffic. Population tools use curated datasets where stated. OpenStreetMap-derived results depend on the current upstream database and provider availability. The service is not intended for legal boundary, emergency, aviation, maritime-safety, survey-grade, or other critical decisions.
+
+## Crawling and machine-readable content
+
+Individual tool pages contain a direct answer, tool description, methodology, worked examples, related questions, glossary, FAQs, and structured data. Country map pages contain country-specific map information, geographic statistics, FAQs and related tools.
+
+For current URLs and crawl directives, use https://mapforge.tools/robots.txt and https://mapforge.tools/sitemap.xml.
