@@ -3,16 +3,16 @@ import { TOOLS } from "@/lib/registry";
 import { ALL_GUIDES } from "@/data/allGuides";
 import { LOCALES } from "@/lib/i18n";
 import { isToolLocalized } from "@/data/localizedTools";
-import { isToolLocalized } from "@/data/localizedTools";
 import countriesTopo from "world-atlas/countries-110m.json";
 
 const BASE = "https://www.mapbench.site";
 const slugify = (value: string) => value.normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
-const localized = (path: string) => Object.fromEntries([
-  ["x-default", `${BASE}${path}`],
+const englishOnly = (path: string) => ({ en: `${BASE}${path}`, "x-default": `${BASE}${path}` });
+const localizedToolAlternates = (path: string, slug: string) => Object.fromEntries([
   ["en", `${BASE}${path}`],
-  ...LOCALES.map(locale => [locale, `${BASE}/${locale}${path === "/" ? "" : path}`]),
+  ["x-default", `${BASE}${path}`],
+  ...LOCALES.filter(locale => isToolLocalized(locale, slug)).map(locale => [locale, `${BASE}/${locale}${path}`]),
 ]);
 
 const countryPages = Array.from(
@@ -33,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${BASE}${path}`,
     changeFrequency: path === "" ? "weekly" as const : "monthly" as const,
     priority: path === "" ? 1 : path === "/tools" ? 0.9 : 0.6,
-    alternates: { languages: localized(path || "/") },
+    alternates: { languages: englishOnly(path || "/") },
   }));
 
   const toolPages = TOOLS.map(t => ({
@@ -41,7 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: t.popular ? 0.8 : 0.7,
     alternates: {
-      languages: localized(`/tools/${t.slug}`),
+      languages: localizedToolAlternates(`/tools/${t.slug}`, t.slug),
     },
   }));
 
@@ -51,16 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "yearly" as const,
     priority: 0.5,
     alternates: {
-      languages: localized(`/guides/${g.slug}`),
-    },
-  }));
-
-  const localizedHome = LOCALES.filter(locale => LOCALES.includes(locale)).map(locale => ({
-    url: `${BASE}/${locale}`,
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-    alternates: {
-      languages: localized("/"),
+      languages: englishOnly(`/guides/${g.slug}`),
     },
   }));
 
@@ -77,5 +68,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const localizedGuides: MetadataRoute.Sitemap = [];
 
-  return [...staticPages, ...toolPages, ...guidePages, ...countryPages, ...localizedHome, ...localizedTools, ...localizedGuides];
+  return [...staticPages, ...toolPages, ...guidePages, ...countryPages, ...localizedTools, ...localizedGuides];
 }
