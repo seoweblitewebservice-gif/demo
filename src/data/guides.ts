@@ -90,7 +90,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "how-distance-calculation-works",
-    title: "How Distance Calculation Works: Haversine, Geodesics and When It Matters",
+    title: "Distance Calculation: Haversine, Geodesics & When It Matters",
     description: "Why flat-Earth math fails past a few kilometres, what the haversine formula does, and how big the difference to a full ellipsoidal geodesic really is.",
     date: "2025-09-20",
     readMins: 6,
