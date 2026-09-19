@@ -36,6 +36,7 @@ export default function PrivacyPage() {
         <p>We store one preference — your light/dark theme choice — in <code>localStorage</code>. Tool states (map position, radii, pins) live in the URL so they can be shared; nothing is written server-side.</p>
         <h2>Analytics & advertising</h2>
         <p>If aggregate analytics are enabled in the future, they will be privacy-preserving and documented here first. Reserved ad slots never overlay maps, results or download buttons, and ad providers never receive your coordinates or files.</p>
+        <p>If Google AdSense is enabled, Google and its advertising partners may use cookies, web beacons, IP addresses and similar identifiers to serve and measure ads. See <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">How Google uses information from sites or apps that use its services</a> for Google's current explanation of this processing.</p>
         <h2>Questions</h2>
         <p>If anything here is unclear, the source code of this site is the definitive answer — every behaviour described above is verifiable in the browser's network tab.</p>
       </div>
