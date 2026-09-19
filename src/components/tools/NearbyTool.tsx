@@ -42,7 +42,8 @@ export default function NearbyTool() {
     const c = CATEGORIES.find((x) => x.id === cat)!;
     setBusy(true); setError(null);
     try {
-      const q = `[out:json][timeout:25];node${c.q}(around:${radiusM},${center.lat},${center.lng});out body 80;`;
+      const q = `[out:json][timeout:25];nwr${c.q}(around:${radiusM},${center.lat},${center.lng});out center 80;`;
+      
       const res = await fetch("https://overpass-api.de/api/interpreter", {
         method: "POST", body: new URLSearchParams({ data: q }),
       });
@@ -50,10 +51,9 @@ export default function NearbyTool() {
       if (!res.ok) throw new Error();
       const data = await res.json();
       const list: Poi[] = (data.elements ?? [])
-        .filter((e: any) => e.lat !== undefined && e.lon !== undefined)
         .map((e: any) => ({
           name: e.tags?.name || e.tags?.operator || catLabel(cat),
-          lat: e.lat, lng: e.lon, tags: e.tags ?? {},
+          lat: e.lat ?? e.center?.lat, lng: e.lon ?? e.center?.lon, tags: e.tags ?? {},
           distKm: distanceKm(center, { lat: e.lat, lng: e.lon }),
           bearing: bearingBetween(center, { lat: e.lat, lng: e.lon }),
         }))
