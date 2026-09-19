@@ -164,11 +164,14 @@ export default function ToolContent({ tool }: { tool: ToolDef }) {
 
   return (
     <div className="doc mx-auto max-w-3xl space-y-8">
-      <section aria-label="At a glance" className="rounded-lg border border-line bg-card px-4 py-3">
-        <p className="!mb-0 text-[15px]"><strong>At a glance:</strong> {tool.short} Coverage: {tool.scope}. Free, no account, and shareable via the URL above.</p>
+      <section aria-label="Quick answer" className="rounded-lg border border-line bg-card px-4 py-3">
+        <p className="!mb-0 text-[15px]">
+          <strong>Quick answer:</strong> {tool.name} is a free {category.label.toLowerCase()} tool for {tool.short.toLowerCase()}
+          Coverage: {tool.scope}. No account is required, and results can be shared by URL.
+        </p>
       </section>
       {copy && (
-        <section aria-label="About this tool">
+        <section aria-label="About this tool" data-content-type="tool-explanation">
           <h2 className="font-display text-2xl font-bold tracking-tight">{copy.h2}</h2>
           {copy.paras.map((p, i) => <p key={i} className="mt-3">{p}</p>)}
         </section>
