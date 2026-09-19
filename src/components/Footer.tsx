@@ -32,6 +32,7 @@ const RESOURCES: [string, string][] = [
   ["/methodology", "Methodology"],
   ["/data-sources", "Data sources"],
   ["/about", "About"],
+  ["/contact", "Contact"],
 ];
 
 export default function Footer() {
@@ -52,6 +53,7 @@ export default function Footer() {
           links={[
             ["/privacy", "Privacy Policy"],
             ["/terms", "Terms of Use"],
+            ["/contact", "Contact"],
           ]}
         />
       </div>
