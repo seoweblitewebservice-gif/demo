@@ -3,6 +3,7 @@ import { TOOLS } from "@/lib/registry";
 import { ALL_GUIDES } from "@/data/allGuides";
 import { LOCALES } from "@/lib/i18n";
 import { isToolLocalized } from "@/data/localizedTools";
+import { isToolLocalized } from "@/data/localizedTools";
 import countriesTopo from "world-atlas/countries-110m.json";
 
 const BASE = "https://www.mapbench.site";
@@ -64,7 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const localizedTools = LOCALES.flatMap(locale =>
-    TOOLS.map(t => ({
+    TOOLS.filter(t => isToolLocalized(locale, t.slug)).map(t => ({
       url: `${BASE}/${locale}/tools/${t.slug}`,
       changeFrequency: "monthly" as const,
       priority: t.popular ? 0.65 : 0.55,
@@ -74,17 +75,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  const localizedGuides = LOCALES.flatMap(locale =>
-    ALL_GUIDES.map(g => ({
-      url: `${BASE}/${locale}/guides/${g.slug}`,
-      lastModified: new Date(g.date),
-      changeFrequency: "yearly" as const,
-      priority: 0.4,
-      alternates: {
-        languages: localized(`/guides/${g.slug}`),
-      },
-    }))
-  );
+  const localizedGuides: MetadataRoute.Sitemap = [];
 
   return [...staticPages, ...toolPages, ...guidePages, ...countryPages, ...localizedHome, ...localizedTools, ...localizedGuides];
 }
