@@ -7,6 +7,8 @@ import { readUrlParams, syncUrl, CopyBtn, ErrorBox, Spinner, Stat, Field } from 
 import { DynamicMap, pinElement, PlaceField, type PlaceValue } from "./shared";
 import LocationSearch from "@/components/LocationSearch";
 
+type CountryMeta = { name?: string; capital?: string; region?: string; population?: number; area?: number; currency?: string; callingCode?: string; languages?: string; flag?: string };
+
 type Mode = "forward" | "reverse" | "locate";
 
 const FOCUS_LABELS: Record<string, string> = {
@@ -27,6 +29,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ReturnType<typeof addressBreakdown> & { displayName: string } | null>(null);
+  const [countryMeta, setCountryMeta] = useState<CountryMeta | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const libRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -39,8 +42,18 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
     setBusy(true); setError(null);
     const r = await nominatimReverse(p.lat, p.lng, 16);
     setBusy(false);
-    if (!r.ok) { setError(r.message); setResult(null); return; }
-    setResult({ ...addressBreakdown(r.result.address), displayName: r.result.displayName });
+    if (!r.ok) { setError(r.message); setResult(null); setCountryMeta(null); return; }
+    const parsed = { ...addressBreakdown(r.result.address), displayName: r.result.displayName };
+    setResult(parsed);
+    if (focus === "country" && parsed.countryCode) {
+      try {
+        const cr = await fetch("https://restcountries.com/v3.1/alpha/" + parsed.countryCode);
+        if (cr.ok) {
+          const rows = await cr.json(); const x = rows?.[0];
+          if (x) setCountryMeta({ name: x.name?.common, capital: x.capital?.[0], region: x.region, population: x.population, area: x.area, currency: Object.keys(x.currencies ?? {})[0], callingCode: x.idd?.root ? x.idd.root + (x.idd.suffixes?.[0] ?? "") : undefined, languages: Object.values(x.languages ?? {}).join(", "), flag: x.flag });
+        }
+      } catch { setCountryMeta(null); }
+    } else setCountryMeta(null);
   };
 
   // Auto-lookup when opening with URL coords
@@ -110,6 +123,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
           </>
         ) : (
           <>
+            {mode === "locate" && <Field label="Search any place, address or landmark"><LocationSearch placeholder="Search a city, address or landmark…" onSelect={(h) => setPointAndLookup({ lat: h.lat, lng: h.lng })} /></Field>}
             <div className="grid grid-cols-2 gap-2">
               <Field label="Latitude">
                 <input className="input" inputMode="decimal" placeholder="40.7128" value={latIn} onChange={(e) => setLatIn(e.target.value)} />
@@ -164,6 +178,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
               </tbody>
             </table>
             {point && <CopyBtn text={result.displayName} label="Copy full address" />}
+            {focus === "country" && countryMeta && <div className="grid grid-cols-2 gap-2 border-t border-line pt-3">{countryMeta.capital && <Stat label="Capital" value={countryMeta.capital} />}{countryMeta.region && <Stat label="Region" value={countryMeta.region} />}{countryMeta.population && <Stat label="Population" value={countryMeta.population.toLocaleString()} />}{countryMeta.area && <Stat label="Area" value={countryMeta.area.toLocaleString() + " km²"} />}{countryMeta.currency && <Stat label="Currency" value={countryMeta.currency} />}{countryMeta.callingCode && <Stat label="Calling code" value={countryMeta.callingCode} />}{countryMeta.languages && <Stat label="Languages" value={countryMeta.languages} />}</div>}
           </div>
         )}
       </div>
