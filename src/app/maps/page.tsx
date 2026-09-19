@@ -14,7 +14,7 @@ const MAP_FAQS: [string, string][] = [
   ["SVG or PNG — which should I choose?", "SVG for anything printed or resized (worksheets, posters, design files): it stays razor-sharp at any size and stays editable. PNG (2400 px) for slides, documents and quick sharing where a raster image is simpler."],
   ["Where does the boundary data come from?", "Country and world outlines from Natural Earth's 1:110m public-domain dataset; US states and the national outline from US Census TIGER/TopoJSON (1:10m). Both are rendered client-side with d3-geo — nothing is uploaded or tracked."],
   ["Can I request a map that isn't listed?", "The library already covers the world, every mapped country and all US states. For custom regions, draw them with the Map Area Calculator or Polygon Area tool and export GeoJSON/SVG from there."],
-  ["Do I need to credit MapForge?", "No attribution is required for public-domain data. A credit line is appreciated but never obligatory; if you reuse OpenStreetMap-derived imagery elsewhere on the site, OSM's ODbL asks for '© OpenStreetMap contributors'."],
+  ["Do I need to credit MapBench?", "No attribution is required for public-domain data. A credit line is appreciated but never obligatory; if you reuse OpenStreetMap-derived imagery elsewhere on the site, OSM's ODbL asks for '© OpenStreetMap contributors'."],
 ];
 
 export default function MapsPage() {
