@@ -32,6 +32,8 @@ export default async function ToolPage({ params }: Props) {
   const tool = toolBySlug.get(slug);
   if (!tool) notFound();
   const category = CATEGORIES.find((c) => c.id === tool.category);
+  const url = `/tools/${tool.slug}`;
+  const absoluteUrl = `https://mapforge.tools${url}`;
 
   const jsonLd = [
     {
@@ -57,9 +59,9 @@ export default async function ToolPage({ params }: Props) {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-        { "@type": "ListItem", position: 2, name: "Tools", item: "/tools" },
-        ...(category ? [{ "@type": "ListItem", position: 3, name: category.label, item: `/tools?cat=${category.id}` }] : []),
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://mapforge.tools/" },
+        { "@type": "ListItem", position: 2, name: "Tools", item: "https://mapforge.tools/tools" },
+        ...(category ? [{ "@type": "ListItem", position: 3, name: category.label, item: `https://mapforge.tools/tools?cat=${category.id}` }] : []),
         { "@type": "ListItem", position: category ? 4 : 3, name: tool.name },
       ],
     },
