@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Fraunces, Manrope, Source_Serif_4 } from "next/font/google";
 import Header, { Footer } from "@/components/Header";
 import SearchPalette from "@/components/SearchPalette";
+import LanguageSuggestion from "@/components/LanguageSuggestion";
 import "./globals.css";
 
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap", preload: true, weight: ["600", "700"] });
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <main id="main" className="container-sf py-6 sm:py-8">{children}</main>
         <Footer />
         <SearchPalette />
+        <LanguageSuggestion />
       </body>
     </html>
   );
