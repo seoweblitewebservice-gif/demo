@@ -1,8 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { Fraunces, Manrope, Source_Serif_4 } from "next/font/google";
 import Header, { Footer } from "@/components/Header";
 import SearchPalette from "@/components/SearchPalette";
 import "./globals.css";
+
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap", preload: true, weight: ["600", "700"] });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap", preload: true, weight: ["400", "500", "600", "700", "800"] });
+const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-source-serif", display: "swap", preload: true, weight: ["400", "600"] });
+
 
 export const metadata: Metadata = {
   verification: {
@@ -47,7 +53,7 @@ const themeScript = `(function(){try{var t=localStorage.getItem("sf-theme");var 
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${fraunces.variable} ${manrope.variable} ${sourceSerif.variable}`}>
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
@@ -57,12 +63,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           ]
         }) }} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body className="min-h-screen bg-canvas font-sans text-ink antialiased">
         <Header />
