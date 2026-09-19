@@ -66,7 +66,6 @@ export default async function GuidePage({ params }: Props) {
   const g = allGuideBySlug.get(slug);
   if (!g) notFound();
   const others = ALL_GUIDES.filter((x) => x.slug !== slug);
-  const related = ALL_GUIDES.filter((x) => x.slug !== slug && x.blocks.some((b) => b.t === "toolbox" && b.slugs.some((s) => toolboxSlugs.includes(s))));
 
   // ---- Long-form depth engine: compose original editorial sections until the
   // ---- post lands inside the 2,000–2,500 word window.
@@ -77,6 +76,7 @@ export default async function GuidePage({ params }: Props) {
   }, 0);
 
   const toolboxSlugs = g.blocks.filter((b) => b.t === "toolbox").flatMap((b) => (b as { slugs: string[] }).slugs);
+  const related = ALL_GUIDES.filter((x) => x.slug !== slug && x.blocks.some((b) => b.t === "toolbox" && b.slugs.some((s) => toolboxSlugs.includes(s))));
   const firstTool = toolBySlug.get(toolboxSlugs[0] ?? "");
   const cat = CATEGORIES.find((c) => c.id === (firstTool?.category ?? "location")) ?? CATEGORIES[0];
 
