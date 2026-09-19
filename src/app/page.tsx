@@ -97,9 +97,9 @@ export default function HomePage() {
       {/* ---------- WHAT IS ---------- */}
       <section aria-labelledby="what-is" className="border-t border-line py-10">
         <div className="mx-auto max-w-3xl">
-          <h2 id="what-is" className="sect-h">What is MapForge?</h2>
+          <h2 id="what-is" className="sect-h">What is MapBench?</h2>
           <p className="mt-3">
-            MapForge is a free, browser-first platform of geographic utilities. It answers everyday questions —
+            MapBench is a free, browser-first platform of geographic utilities. It answers everyday questions —
             <em>“what county am I in?”</em>, <em>“how far apart are these towns?”</em>, <em>“what's inside my delivery radius?”</em> —
             with proper geodesic math instead of flat-map shortcuts, and it does the heavy lifting on your own device.
           </p>
@@ -146,7 +146,7 @@ export default function HomePage() {
         <h2 id="faq" className="sect-h">Frequently asked questions</h2>
         <div className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2 font-sans">
           {[
-            ["Is MapForge really free?", "Yes. Every tool and every blank map is free, with no account, trial or premium tier."],
+            ["Is MapBench really free?", "Yes. Every tool and every blank map is free, with no account, trial or premium tier."],
             ["Do you upload my files or location?", "No. Files are parsed locally; your GPS position is used only in-memory to show results. See the privacy page for the exact external requests."],
             ["How accurate are distances?", "Spherical geodesy on WGS84 — within ~0.3% of ellipsoidal geodesics. Methodology documents every formula."],
             ["Are drive times live traffic?", "No — free-flow estimates from the road network, clearly labelled as such."],
@@ -168,7 +168,7 @@ export default function HomePage() {
             "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: [
-              ["Is MapForge really free?", "Yes. Every tool and every blank map is free, with no account, trial or premium tier."],
+              ["Is MapBench really free?", "Yes. Every tool and every blank map is free, with no account, trial or premium tier."],
               ["Do you upload my files or location?", "No. Files are parsed locally; your GPS position is used only in-memory to show results. See the privacy page for the exact external requests."],
               ["How accurate are distances?", "Spherical geodesy on WGS84 — within ~0.3% of ellipsoidal geodesics. Methodology documents every formula."],
               ["Are drive times live traffic?", "No — free-flow estimates from the road network, clearly labelled as such."],
