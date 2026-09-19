@@ -161,6 +161,28 @@ export default function HomePage() {
         </div>
       </section>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              ["Is MapForge really free?", "Yes. Every tool and every blank map is free, with no account, trial or premium tier."],
+              ["Do you upload my files or location?", "No. Files are parsed locally; your GPS position is used only in-memory to show results. See the privacy page for the exact external requests."],
+              ["How accurate are distances?", "Spherical geodesy on WGS84 — within ~0.3% of ellipsoidal geodesics. Methodology documents every formula."],
+              ["Are drive times live traffic?", "No — free-flow estimates from the road network, clearly labelled as such."],
+              ["Can I use exports commercially?", "Yes, subject to the underlying open-data licences (mainly ODbL attribution for OSM-derived maps)."],
+              ["Why is population data labelled with a year?", "Because honesty matters: our city dataset is an ≈2020-vintage estimate, and we say so on every page that uses it."]
+            ].map(([q, a]) => ({
+              "@type": "Question",
+              name: q,
+              acceptedAnswer: { "@type": "Answer", text: a }
+            }))
+          })
+        }}
+      />
+
       {/* ---------- DATA SOURCES ---------- */}
       <section aria-labelledby="sources" className="border-t border-line py-10">
         <div className="mx-auto max-w-3xl">
