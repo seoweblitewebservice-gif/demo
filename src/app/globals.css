@@ -40,9 +40,9 @@
   --color-brand-strong: var(--sf-brand-strong);
   --color-brand-soft: var(--sf-brand-soft);
   --color-ember: var(--sf-ember);
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-serif: "Source Serif 4", Georgia, serif;
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-serif: var(--font-source-serif), Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 }
 
 html { scroll-behavior: smooth; }
