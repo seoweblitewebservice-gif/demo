@@ -1,1 +1,1 @@
-// EMERGENCY - will replace with full content
+// RESTORE_PENDING - file too large for single message, using alternate method
