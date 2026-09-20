@@ -164,7 +164,8 @@ export const GUIDE2: Record<CategoryId, { title: string; paras: string[]; pros: 
     ],
     pros: [
       "Use the five lines as calibration constants for other tools (Equator circumference ≈ 40,075 km).",
-      "When explaining meridians, lead with the Greenwich/GPS offset story — it makes datums memorable."],
+      "When explaining meridians, lead with the Greenwich/GPS offset story — it makes datums memorable.",
+    ],
     qa: [
       ["Do the tropics' latitudes change?", "Yes, with the axial tilt's slow oscillation — currently drifting a few tens of metres per year."],
       ["Why 180° for the date line?", "It's the Prime Meridian's antipodal meridian; the zig-zags are national choices layered on that geometry."],
@@ -185,6 +186,23 @@ export const GUIDE2: Record<CategoryId, { title: string; paras: string[]; pros: 
     qa: [
       ["Why not just use census APIs everywhere?", "They're authoritative but US-scoped and slower to explore; global screening needs lighter, labelled estimates first."],
       ["How rough is a cost index?", "It compresses housing, food, services and rents into one rent-inclusive number — directionally excellent, lease-signing insufficient."],
+    ],
+  },
+  network: {
+    title: "Reading IP lookups without over-trusting them",
+    paras: [
+      "An IP address names a network attachment on the Internet, not a street address or a person. Public lookup services map that address to country, region, city, ISP, ASN and organisation using routing tables and commercial geolocation databases. The result is network context: useful for abuse triage, fraud signals, content localisation and rough audience analysis, and dangerous when treated as proof of physical presence. VPNs, mobile carriers, carrier-grade NAT, corporate proxies and anycast edges routinely place the reported city hundreds of kilometres from the user.",
+      "The professional habit is triangulation and provenance. Compare the IP result against browser geolocation (when the user grants it), against a second database, and against the AS organisation's known footprint. Print the database vintage and the confidence band if the provider supplies one. Never store the raw IP longer than the investigation needs, and never present a city-level IP pin as if it were a GPS fix — the map and the language both matter.",
+    ],
+    pros: [
+      "Treat IP geolocation as network context, not physical proof of presence.",
+      "Cross-check against a second source and against the AS organisation when the decision matters.",
+      "Record the lookup time and database source; these datasets change.",
+      "Prefer ASN and organisation fields for abuse and infrastructure questions; they age better than city pins.",
+    ],
+    qa: [
+      ["Why is the city often wrong?", "Mobile networks, CGNAT and VPNs share exit points; the database maps the exit, not the subscriber."],
+      ["Is the ISP field reliable?", "Usually more stable than city; organisation and ASN change less frequently than geolocation guesses."],
     ],
   },
 };
