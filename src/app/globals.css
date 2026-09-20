@@ -93,7 +93,6 @@ body { background: var(--sf-canvas); color: var(--sf-ink); }
   .chip-brand { background: var(--sf-brand-soft); color: var(--sf-brand-strong); border-color: transparent; }
   .chip-ember { background: var(--sf-warn-bg); color: var(--sf-ember); border-color: transparent; }
 
-  /* Document (editorial) text — serif like a field guide */
   .doc p, .doc li, .doc summary { font-family: var(--font-serif); }
   .doc p { line-height: 1.75; color: var(--sf-mute); margin-bottom: .9rem; font-size: 0.97rem; }
   .doc strong { color: var(--sf-ink); }
@@ -114,6 +113,47 @@ body { background: var(--sf-canvas); color: var(--sf-ink); }
   .sect-h { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.01em; border-bottom: 1px solid var(--sf-line); padding-bottom: .5rem; }
   .toollink { color: var(--sf-brand-strong); font-family: var(--font-display); font-weight: 700; }
   .toollink:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Homepage map-style hero */
+  .hero-map {
+    background: linear-gradient(180deg, #f3eee3 0%, var(--sf-canvas) 100%);
+  }
+  .hero-map-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+    background-image:
+      /* soft grid like lat/long */
+      linear-gradient(to right, rgb(46 107 79 / 0.12) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(46 107 79 / 0.12) 1px, transparent 1px),
+      /* faint continent-ish blobs */
+      radial-gradient(ellipse 45% 35% at 18% 48%, rgb(46 107 79 / 0.2) 0%, transparent 70%),
+      radial-gradient(ellipse 30% 40% at 48% 42%, rgb(46 107 79 / 0.16) 0%, transparent 68%),
+      radial-gradient(ellipse 28% 32% at 78% 52%, rgb(46 107 79 / 0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 18% 22% at 88% 72%, rgb(46 107 79 / 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 22% 18% at 32% 72%, rgb(46 107 79 / 0.1) 0%, transparent 70%);
+    background-size:
+      48px 48px,
+      48px 48px,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%;
+    pointer-events: none;
+  }
+  .hero-map-fade {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, transparent 0%, var(--sf-canvas) 85%);
+    pointer-events: none;
+  }
+  .dark .hero-map {
+    background: linear-gradient(180deg, #1a1712 0%, var(--sf-canvas) 100%);
+  }
+  .dark .hero-map-bg {
+    opacity: 0.18;
+  }
 }
 
 .map-shell { position: relative; width: 100%; height: 420px; border-radius: 0.6rem; overflow: hidden; border: 1px solid var(--sf-line); }
