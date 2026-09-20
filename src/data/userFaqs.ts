@@ -59,4 +59,9 @@ export const USER_FAQS: Record<CategoryId, [string, string][]> = {
     ["Why is my rural radius population low?", "The dataset captures major cities; rural settlement is intentionally out of scope, and the total is labelled a lower bound."],
     ["Can I export the breakdown?", "Yes — CSV with each contributing city, distance, bearing and population, so any total is recomputable."],
   ],
+  network: [
+    ["Is the city from an IP lookup accurate?", "It is an estimate of the network exit, not a precise street location. VPNs, mobile carriers and shared IPs often place the city far from the actual user."],
+    ["Is my IP stored?", "No. Lookups are performed for the current request and are not stored as a personal history."],
+    ["Can I use this for legal identification?", "No. IP geolocation is network context only. Legal or identity claims require proper offline verification."],
+  ],
 };
