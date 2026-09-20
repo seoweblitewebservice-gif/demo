@@ -5,10 +5,11 @@ import { COPY4 } from "./toolCopy4";
 import { COPY5 } from "./toolCopy5";
 import { COPY6A } from "./toolCopy6a";
 import { COPY6B } from "./toolCopy6b";
+import { COPY7 } from "./toolCopy7";
 
 export interface ToolCopy { h2: string; paras: string[] }
 
-/** ~180–210 words of unique on-page content per tool slug. */
+/** Unique on-page content per tool slug — written for usefulness, not keyword stuffing. */
 export const TOOL_COPY: Record<string, ToolCopy> = {
   ...COPY1,
   ...COPY2,
@@ -17,4 +18,5 @@ export const TOOL_COPY: Record<string, ToolCopy> = {
   ...COPY5,
   ...COPY6A,
   ...COPY6B,
+  ...COPY7,
 };

@@ -10,20 +10,47 @@ export function generateStaticParams() {
   return TOOLS.map((t) => ({ tool: t.slug }));
 }
 
+function seoTitle(name: string, keywords: string[]) {
+  const primary = keywords[0];
+  // Natural title: tool name + free cue — avoids keyword stuffing
+  if (primary && primary.length < 40 && !name.toLowerCase().includes(primary.toLowerCase())) {
+    return `${name} — Free Online ${primary.replace(/^./, (c) => c.toUpperCase())} Tool`;
+  }
+  return `${name} — Free Online Map Tool`;
+}
+
+function seoDescription(tool: { name: string; short: string; intro: string; scope: string }) {
+  const base = tool.intro?.trim() || tool.short;
+  const tail = ` Free, no sign-up. Coverage: ${tool.scope}. Runs in your browser on MapBench.`;
+  const combined = base.endsWith(".") ? base + tail : base + "." + tail;
+  return combined.length > 160 ? combined.slice(0, 157) + "…" : combined;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tool: slug } = await params;
   const tool = toolBySlug.get(slug);
   if (!tool) return {};
   const url = `/tools/${tool.slug}`;
-  const absoluteUrl = `https://www.mapbench.site${url}`;
+  const title = seoTitle(tool.name, tool.keywords);
+  const description = seoDescription(tool);
   return {
-    title: tool.name,
-    description: tool.short,
-    keywords: tool.keywords,
+    title,
+    description,
+    keywords: [...tool.keywords, tool.name, "free", "map tool", "no sign-up"],
     alternates: { canonical: url },
     robots: { index: true, follow: true },
-    openGraph: { type: "website", title: `${tool.name} — Free Online Tool`, description: tool.short, url, siteName: "MapBench" },
-    twitter: { card: "summary", title: `${tool.name} · MapBench`, description: tool.short },
+    openGraph: {
+      type: "website",
+      title: `${tool.name} — Free Online Tool | MapBench`,
+      description,
+      url,
+      siteName: "MapBench",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${tool.name} · MapBench`,
+      description,
+    },
   };
 }
 
@@ -32,8 +59,8 @@ export default async function ToolPage({ params }: Props) {
   const tool = toolBySlug.get(slug);
   if (!tool) notFound();
   const category = CATEGORIES.find((c) => c.id === tool.category);
-  const url = `/tools/${tool.slug}`;
-  const absoluteUrl = `https://www.mapbench.site${url}`;
+  const absoluteUrl = `https://www.mapbench.site/tools/${tool.slug}`;
+  const faqEntities = [...tool.faq, ...(USER_FAQS[tool.category] ?? [])];
 
   const jsonLd = [
     {
@@ -46,14 +73,22 @@ export default async function ToolPage({ params }: Props) {
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Any (web browser)",
       isAccessibleForFree: true,
+      browserRequirements: "Requires JavaScript and HTML5",
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       featureList: tool.howTo,
+      keywords: tool.keywords.join(", "),
     },
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: "MapBench",
-      url: "https://www.mapbench.site",
+      "@type": "HowTo",
+      name: `How to use ${tool.name}`,
+      description: tool.short,
+      step: tool.howTo.map((text, i) => ({
+        "@type": "HowToStep",
+        position: i + 1,
+        name: `Step ${i + 1}`,
+        text,
+      })),
     },
     {
       "@context": "https://schema.org",
@@ -61,14 +96,16 @@ export default async function ToolPage({ params }: Props) {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: "https://www.mapbench.site/" },
         { "@type": "ListItem", position: 2, name: "Tools", item: "https://www.mapbench.site/tools" },
-        ...(category ? [{ "@type": "ListItem", position: 3, name: category.label, item: `https://www.mapbench.site/tools?cat=${category.id}` }] : []),
-        { "@type": "ListItem", position: category ? 4 : 3, name: tool.name },
+        ...(category
+          ? [{ "@type": "ListItem", position: 3, name: category.label, item: `https://www.mapbench.site/tools?cat=${category.id}` }]
+          : []),
+        { "@type": "ListItem", position: category ? 4 : 3, name: tool.name, item: absoluteUrl },
       ],
     },
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: [...tool.faq, ...(USER_FAQS[tool.category] ?? [])].map(([q, a]) => ({
+      mainEntity: faqEntities.map(([q, a]) => ({
         "@type": "Question",
         name: q,
         acceptedAnswer: { "@type": "Answer", text: a },

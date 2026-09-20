@@ -1,6 +1,7 @@
 "use client";
 import { useMemo } from "react";
-import { CATEGORIES, type ToolDef } from "@/lib/registry";
+import Link from "next/link";
+import { CATEGORIES, toolBySlug, type ToolDef } from "@/lib/registry";
 import { TOOL_COPY } from "@/data/toolCopy";
 import { CATEGORY_ESSAYS } from "@/data/categoryEssays";
 import { CATEGORY_TIPS, CATEGORY_GLOSSARY, CATEGORY_DATA_NOTE } from "@/data/categoryExtras";
@@ -147,6 +148,10 @@ const RELATED_QA: Record<string, [string, string][]> = {
     ["Can I cite these numbers?", "Cite them as labelled estimates with the printed vintage; legal or funding work should use census sources."],
     ["Why is my rural radius population low?", "Curated datasets capture major cities; rural settlement is intentionally out of scope and the sum is labelled a lower bound."],
   ],
+  network: [
+    ["Is IP location the same as GPS?", "No. IP geolocation estimates the network exit; GPS uses the device sensors. VPNs make IP location show the VPN city."],
+    ["Can I use IP lookup in court or for emergencies?", "No. It is approximate network data, not proof of a person's street address."],
+  ],
 };
 
 export default function ToolContent({ tool }: { tool: ToolDef }) {
@@ -156,24 +161,33 @@ export default function ToolContent({ tool }: { tool: ToolDef }) {
   const tips = CATEGORY_TIPS[tool.category];
   const guide2 = GUIDE2[tool.category];
   const guide3 = GUIDE3[tool.category];
-  const qa = [...(RELATED_QA[tool.category] ?? []), ...guide2.qa, ...guide3.qa];
-  const glossary = [...CATEGORY_GLOSSARY[tool.category], ...guide3.gloss];
+  const qa = [...(RELATED_QA[tool.category] ?? []), ...(guide2?.qa ?? []), ...(guide3?.qa ?? [])];
+  const glossary = [...(CATEGORY_GLOSSARY[tool.category] ?? []), ...(guide3?.gloss ?? [])];
   const examples = useMemo(() => buildExamples(tool), [tool]);
-
   const limits = LIMITS[tool.category];
+  const related = (tool.related || [])
+    .map((s) => toolBySlug.get(s))
+    .filter((t): t is ToolDef => !!t && t.slug !== tool.slug)
+    .slice(0, 4);
 
   return (
     <div className="doc mx-auto max-w-3xl space-y-8">
       <section aria-label="Quick answer" className="rounded-lg border border-line bg-card px-4 py-3">
         <p className="!mb-0 text-[15px]">
-          <strong>Quick answer:</strong> {tool.name} is a free {category.label.toLowerCase()} tool for {tool.short.toLowerCase()}
+          <strong>Quick answer:</strong> {tool.name} is a free {category.label.toLowerCase()} tool for{" "}
+          {tool.short.charAt(0).toLowerCase() + tool.short.slice(1)}{" "}
           Coverage: {tool.scope}. No account is required, and results can be shared by URL.
         </p>
       </section>
+
       {copy && (
         <section aria-label="About this tool" data-content-type="tool-explanation">
           <h2 className="font-display text-2xl font-bold tracking-tight">{copy.h2}</h2>
-          {copy.paras.map((p, i) => <p key={i} className="mt-3">{p}</p>)}
+          {copy.paras.map((p, i) => (
+            <p key={i} className="mt-3">
+              {p}
+            </p>
+          ))}
         </section>
       )}
 
@@ -189,37 +203,61 @@ export default function ToolContent({ tool }: { tool: ToolDef }) {
         </ul>
       </section>
 
-      <section aria-label="Deeper understanding">
-        <h2 className="font-display text-2xl font-bold tracking-tight">{essay.title}</h2>
-        {essay.paras.map((p, i) => <p key={i} className="mt-3">{p}</p>)}
-      </section>
-
-      <section aria-label="Tips and common mistakes">
-        <h2 className="font-display text-2xl font-bold tracking-tight">Tips &amp; common mistakes</h2>
-        {tips.map((t, i) => <p key={i} className="mt-3">{t}</p>)}
-      </section>
-
-      <section aria-label="Field guide">
-        <h2 className="font-display text-2xl font-bold tracking-tight">{guide2.title}</h2>
-        {guide2.paras.map((p, i) => <p key={i} className="mt-3">{p}</p>)}
-        <h3 className="mt-4 font-sans text-base font-extrabold">How professionals use this</h3>
-        <ul className="mt-2 list-disc space-y-1.5 pl-6">
-          {guide2.pros.map((p) => <li key={p}>{p}</li>)}
-        </ul>
-      </section>
-
-      <section aria-label="Step-by-step masterclass">
-        <h2 className="font-display text-2xl font-bold tracking-tight">Step-by-step masterclass</h2>
-        <ol className="mt-3 space-y-3">
-          {guide3.master.map(([t, b], i) => (
-            <li key={t} className="rounded-lg border border-line bg-card px-4 py-3">
-              <span className="font-sans text-sm font-extrabold text-brand-strong">{i + 1}. {t} — </span>
-              <span className="text-[15px] text-mute">{b}</span>
-            </li>
+      {essay && (
+        <section aria-label="Deeper understanding">
+          <h2 className="font-display text-2xl font-bold tracking-tight">{essay.title}</h2>
+          {essay.paras.map((p, i) => (
+            <p key={i} className="mt-3">
+              {p}
+            </p>
           ))}
-        </ol>
-        <p className="mt-3">{guide3.regional}</p>
-      </section>
+        </section>
+      )}
+
+      {tips && tips.length > 0 && (
+        <section aria-label="Tips and common mistakes">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Tips &amp; common mistakes</h2>
+          {tips.map((t, i) => (
+            <p key={i} className="mt-3">
+              {t}
+            </p>
+          ))}
+        </section>
+      )}
+
+      {guide2 && (
+        <section aria-label="Field guide">
+          <h2 className="font-display text-2xl font-bold tracking-tight">{guide2.title}</h2>
+          {guide2.paras.map((p, i) => (
+            <p key={i} className="mt-3">
+              {p}
+            </p>
+          ))}
+          <h3 className="mt-4 font-sans text-base font-extrabold">How professionals use this</h3>
+          <ul className="mt-2 list-disc space-y-1.5 pl-6">
+            {guide2.pros.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {guide3 && (
+        <section aria-label="Step-by-step masterclass">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Step-by-step masterclass</h2>
+          <ol className="mt-3 space-y-3">
+            {guide3.master.map(([t, b], i) => (
+              <li key={t} className="rounded-lg border border-line bg-card px-4 py-3">
+                <span className="font-sans text-sm font-extrabold text-brand-strong">
+                  {i + 1}. {t} —{" "}
+                </span>
+                <span className="text-[15px] text-mute">{b}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3">{guide3.regional}</p>
+        </section>
+      )}
 
       {qa.length > 0 && (
         <section aria-label="Related questions">
@@ -235,44 +273,75 @@ export default function ToolContent({ tool }: { tool: ToolDef }) {
         </section>
       )}
 
-      <section aria-label="Glossary">
-        <h2 className="font-display text-2xl font-bold tracking-tight">Quick glossary</h2>
-        <dl className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
-          {glossary.map(([t, d]) => (
-            <div key={t} className="rounded-lg border border-line bg-card px-3 py-2">
-              <dt className="font-sans text-sm font-extrabold text-brand-strong">{t}</dt>
-              <dd className="text-sm text-mute">{d}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      {glossary.length > 0 && (
+        <section aria-label="Glossary">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Quick glossary</h2>
+          <dl className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+            {glossary.map(([t, d]) => (
+              <div key={t} className="rounded-lg border border-line bg-card px-3 py-2">
+                <dt className="font-sans text-sm font-extrabold text-brand-strong">{t}</dt>
+                <dd className="text-sm text-mute">{d}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
 
       {SUPPLEMENT[tool.category] && (
         <section aria-label="Further reading">
           <h2 className="font-display text-2xl font-bold tracking-tight">{SUPPLEMENT[tool.category]!.title}</h2>
           <p className="mt-3">{SUPPLEMENT[tool.category]!.para}</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-6">
-            {SUPPLEMENT[tool.category]!.bullets.map((b) => <li key={b}>{b}</li>)}
+            {SUPPLEMENT[tool.category]!.bullets.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
           </ul>
         </section>
       )}
 
-      <section aria-label="Honest limits and when to escalate">
-        <h2 className="font-display text-2xl font-bold tracking-tight">Honest limits &amp; when to escalate</h2>
-        {limits.paras.map((p, i) => <p key={i} className="mt-3">{p}</p>)}
-        <ul className="mt-2 list-disc space-y-1.5 pl-6">
-          {limits.escalate.map((e) => <li key={e}>{e}</li>)}
-        </ul>
-      </section>
+      {limits && (
+        <section aria-label="Honest limits and when to escalate">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Honest limits &amp; when to escalate</h2>
+          {limits.paras.map((p, i) => (
+            <p key={i} className="mt-3">
+              {p}
+            </p>
+          ))}
+          <ul className="mt-2 list-disc space-y-1.5 pl-6">
+            {limits.escalate.map((e) => (
+              <li key={e}>{e}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section aria-label="Data and methodology note">
         <h2 className="font-display text-2xl font-bold tracking-tight">Data &amp; methodology note</h2>
-        <p className="mt-3">{tool.method ? `${tool.method} ` : ""}{CATEGORY_DATA_NOTE[tool.category]}</p>
+        <p className="mt-3">
+          {tool.method ? `${tool.method} ` : ""}
+          {CATEGORY_DATA_NOTE[tool.category]}
+        </p>
         <p className="mt-2">
-          Category context: <strong>{category.label}</strong> — {category.short}{" "}
-          This page is one of the {`${category.label.toLowerCase()} tools`} on MapForge; the related-tools links below and the header's Tools menu connect every sibling instrument.
+          Category: <strong>{category.label}</strong> — {category.short} This page is part of MapBench&apos;s{" "}
+          {category.label.toLowerCase()} tools. Related tools below and the Tools menu link every sibling instrument.
         </p>
       </section>
+
+      {related.length > 0 && (
+        <section aria-label="Continue with related tools">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Continue with related tools</h2>
+          <ul className="mt-3 list-disc space-y-1.5 pl-6 font-sans text-sm">
+            {related.map((r) => (
+              <li key={r.slug}>
+                <Link href={`/tools/${r.slug}`} className="font-bold text-brand-strong hover:underline">
+                  {r.name}
+                </Link>
+                <span className="text-mute"> — {r.short}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
