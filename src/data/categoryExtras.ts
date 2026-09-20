@@ -58,6 +58,11 @@ export const CATEGORY_TIPS: Record<CategoryId, string[]> = {
     "Use radius sums as lower bounds in rural regions: curated major-city datasets capture the big dots, not the in-between settlement. For funding or legal work, move to census geometry; for screening and comparison, the transparent estimate wins on speed.",
     "Compare with ratios, not differences: density and cost indices are snapshots, and the relationship between two cities is far more stable than either absolute value. That stability is what makes quick comparisons legitimate.",
   ],
+  network: [
+    "Treat IP geolocation as an estimate of the network, not a precise physical address. VPNs, mobile carriers, proxies and corporate gateways can place an IP far from the actual device.",
+    "Use browser GPS when you need device-level location and permission is available; use IP lookup when you need public network context such as ISP, ASN or approximate region.",
+    "IP assignments and geolocation databases change. Record the lookup time and source when network location is used for analysis or troubleshooting.",
+  ],
 };
 
 export const CATEGORY_GLOSSARY: Record<CategoryId, [string, string][]> = {
@@ -127,6 +132,12 @@ export const CATEGORY_GLOSSARY: Record<CategoryId, [string, string][]> = {
     ["Cost index", "Rent-inclusive price level relative to a baseline city (here, NYC = 100)."],
     ["Density", "People per unit area; the ratio-stable texture of a city."],
   ],
+  network: [
+    ["Public IP", "An Internet-routable address visible to external services."],
+    ["ASN", "Autonomous System Number identifying a network operator or routing organization."],
+    ["IP geolocation", "An estimate of the geographic area associated with an IP address."],
+    ["Carrier-grade NAT", "A network setup where many customer devices share public IPv4 addresses."],
+  ],
 };
 
 export const CATEGORY_DATA_NOTE: Record<CategoryId, string> = {
@@ -141,4 +152,5 @@ export const CATEGORY_DATA_NOTE: Record<CategoryId, string> = {
   sun: "Solar times use the NOAA algorithm with the 90.833° official zenith; lunar phase uses the synodic cycle. Timezone geometry comes from the open tz database resolved locally in your browser.",
   lines: "Line positions follow the current axial tilt (23.437°); basemap © OpenStreetMap contributors. Facts cite standard astronomical and geodetic references.",
   population: "City populations, densities and cost indices are MapForge's curated ≈2020–2023 snapshot, printed with its vintage and intended for transparent estimation; authoritative US counts live at the Census Bureau.",
+  network: "Public IP metadata is supplied by the IP lookup service and represents an approximate network location; VPNs, proxies, mobile networks and reassignment can reduce geographic accuracy.",
 };
