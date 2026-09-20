@@ -54,6 +54,7 @@ export function localeFromPath(pathname: string): Locale | null {
 
 
 export interface LocaleUI {
+  [key: string]: string;
   free:string; copyLink:string; reset:string; advertisement:string; quickAnswer:string; howTo:string;
   methodology:string; faq:string; relatedTools:string; dataPrivacy:string; category:string; shareTool:string;
   browseAll:string; internationalSupport:string; exploreTools:string; mapTools:string; browseDirectory:string;
