@@ -57,7 +57,7 @@ export interface LocaleUI {
   free:string; copyLink:string; reset:string; advertisement:string; quickAnswer:string; howTo:string;
   methodology:string; faq:string; relatedTools:string; dataPrivacy:string; category:string; shareTool:string;
   browseAll:string; internationalSupport:string; exploreTools:string; mapTools:string; browseDirectory:string;
-  browserLanguage:string; english:string; useLocation:string;
+  browserLanguage:string; english:string; useLocation:string; network:string;
 }
 
 export const LOCALE_UI: Record<Locale, LocaleUI> = {
