@@ -3,11 +3,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Map as MLMap, GeoJSONSource } from "maplibre-gl";
 import { destination, distanceKm, fmtDist, kmTo, toKm, type LatLng, type UnitKey } from "@/lib/geo";
 import { geojsonToGpx, geojsonToKml, downloadText } from "@/lib/formats";
-import { readUrlParams, syncUrl, Field, Seg } from "@/components/ui";
+import { readUrlParams, syncUrl, Field } from "@/components/ui";
 import { DynamicMap, PALETTE, pinElement, type PlaceValue } from "./shared";
 import LocationSearch from "@/components/LocationSearch";
 
 interface Circle { id: number; center: LatLng; radiusKm: number }
+
+const PRESETS = [5, 10, 25, 50, 100];
 
 function circlePolygon(c: Circle): GeoJSON.Feature {
   const coords: [number, number][] = [];
@@ -30,7 +32,7 @@ export default function RadiusTool({ params }: { params?: Record<string, unknown
     const lat = parseFloat(p.get("lat") ?? ""), lng = parseFloat(p.get("lng") ?? "");
     const r = parseFloat(p.get("r") ?? "");
     if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(r)) return [{ id: 1, center: { lat, lng }, radiusKm: r }];
-    return [{ id: 1, center: { lat: 40.7549, lng: -73.984 }, radiusKm: 8 }];
+    return [{ id: 1, center: { lat: 40.7549, lng: -73.984 }, radiusKm: toKm(10, "mi") }];
   });
   const [ringCount, setRingCount] = useState(5);
   const mapRef = useRef<MLMap | null>(null);
@@ -57,7 +59,6 @@ export default function RadiusTool({ params }: { params?: Record<string, unknown
     }) };
     const src = map.getSource("rad") as GeoJSONSource | undefined;
     if (src) src.setData(fc);
-    // markers
     const seen = new Set<number>();
     for (const c of circles) {
       seen.add(c.id);
@@ -104,32 +105,65 @@ export default function RadiusTool({ params }: { params?: Record<string, unknown
     if (mapRef.current) mapRef.current.flyTo({ center: [p.lng, p.lat], zoom: Math.max(mapRef.current.getZoom(), 10), essential: true });
   };
 
+  const currentRadiusDisplay = Number(kmTo(circles[0]?.radiusKm ?? 0, unit).toFixed(unit === "mi" || unit === "km" ? 1 : 2));
   const exportFc: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: effectiveCircles.map(circlePolygon) };
+
+  const radiusKm = circles[0]?.radiusKm ?? 0;
+  const areaStr = fmtArea(radiusKm, unit);
+  const periStr = fmtDist(2 * Math.PI * radiusKm, unit);
+  const diamStr = fmtDist(2 * radiusKm, unit);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[380px,1fr]">
       <div className="card order-2 space-y-4 p-4 lg:order-1">
         <Field label="Center location">
-          <LocationSearch placeholder="Search center place…" onSelect={(h) => setCenter(h)} />
+          <LocationSearch placeholder="Search address, city or landmark…" onSelect={(h) => setCenter(h)} />
         </Field>
-        <p className="text-xs text-mute">Tip: click anywhere on the map to move the center. Drag the orange handle to resize.</p>
+        <p className="text-xs text-mute">Click the map to set center · Drag the orange handle to resize</p>
+
+        {/* Unit toggle — competitor style */}
         {!rings && (
-          <div className="grid grid-cols-2 gap-3">
-            <Field label={`Radius (${unit})`}>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className={`btn btn-sm flex-1 ${unit === "mi" ? "btn-primary" : "btn-ghost"}`}
+              onClick={() => setUnit("mi")}
+            >Miles</button>
+            <button
+              type="button"
+              className={`btn btn-sm flex-1 ${unit === "km" ? "btn-primary" : "btn-ghost"}`}
+              onClick={() => setUnit("km")}
+            >Kilometers</button>
+          </div>
+        )}
+
+        {!rings && (
+          <>
+            <Field label={`Radius (${unit === "mi" ? "mi" : unit === "km" ? "km" : unit})`}>
               <input
                 type="number" min={0.01} step="any" className="input"
-                value={Number(kmTo(circles[0]?.radiusKm ?? 0, unit).toFixed(3))}
+                value={currentRadiusDisplay}
                 onChange={(e) => setRadius(Math.max(0.01, parseFloat(e.target.value) || 0.01))}
               />
             </Field>
-            <Field label="Unit">
-              <select className="select" value={unit} onChange={(e) => setUnit(e.target.value as UnitKey)}>
-                <option value="mi">Miles</option><option value="km">Kilometers</option>
-                <option value="nmi">Nautical miles</option><option value="m">Meters</option><option value="ft">Feet</option>
-              </select>
-            </Field>
-          </div>
+
+            {/* Preset buttons — like SimpleMapLab */}
+            <div className="flex flex-wrap gap-1.5">
+              {PRESETS.map((p) => {
+                const isActive = Math.abs(currentRadiusDisplay - p) < 0.05;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`btn btn-sm ${isActive ? "btn-primary" : "btn-ghost"}`}
+                    onClick={() => setRadius(p)}
+                  >{p}</button>
+                );
+              })}
+            </div>
+          </>
         )}
+
         {rings && (
           <div className="grid grid-cols-2 gap-3">
             <Field label="Rings">
@@ -150,7 +184,10 @@ export default function RadiusTool({ params }: { params?: Record<string, unknown
 
         {multi && !rings && (
           <div className="space-y-2">
-            <span className="label">All circles</span>
+            <div className="flex items-center justify-between">
+              <span className="label">All circles</span>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setCircles((cs) => cs.slice(0, 1))}>Clear extra</button>
+            </div>
             {circles.map((c, i) => (
               <div key={c.id} className="flex items-center gap-2 rounded-lg border border-line p-2 text-sm">
                 <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: PALETTE[(c.id - 1) % PALETTE.length] }} aria-hidden />
@@ -175,18 +212,34 @@ export default function RadiusTool({ params }: { params?: Record<string, unknown
           </div>
         )}
 
+        {/* Stats — Area / Perimeter / Diameter */}
         <div className="space-y-2 border-t border-line pt-3">
-          <div className="text-sm">
-            {rings
-              ? <>Outer circle area: <strong>{fmtArea(circles[0]?.radiusKm ?? 0, unit)}</strong></>
-              : circles.slice(0, 1).map((c) => (
-                <span key={c.id}>Area of circle: <strong>{fmtArea(c.radiusKm, unit)}</strong> · circumference <strong>{fmtDist(2 * Math.PI * c.radiusKm, unit)}</strong></span>
-              ))}
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-lg bg-well px-2 py-2">
+              <div className="text-[10px] font-bold uppercase tracking-wide text-mute">Area</div>
+              <div className="mt-0.5 text-sm font-bold text-ink">{areaStr}</div>
+            </div>
+            <div className="rounded-lg bg-well px-2 py-2">
+              <div className="text-[10px] font-bold uppercase tracking-wide text-mute">Perimeter</div>
+              <div className="mt-0.5 text-sm font-bold text-ink">{periStr}</div>
+            </div>
+            <div className="rounded-lg bg-well px-2 py-2">
+              <div className="text-[10px] font-bold uppercase tracking-wide text-mute">Diameter</div>
+              <div className="mt-0.5 text-sm font-bold text-ink">{diamStr}</div>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => downloadText("mapforge-radius.geojson", JSON.stringify(exportFc, null, 2), "application/geo+json")}>Export GeoJSON</button>
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadText("mapforge-radius.kml", geojsonToKml(exportFc, "Radius circles"), "application/vnd.google-earth.kml+xml")}>KML</button>
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadText("mapforge-radius.gpx", geojsonToGpx(exportFc, "Radius circles"), "application/gpx+xml")}>GPX</button>
+
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => downloadText("mapbench-radius.geojson", JSON.stringify(exportFc, null, 2), "application/geo+json")}>Export GeoJSON</button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadText("mapbench-radius.kml", geojsonToKml(exportFc, "Radius circles"), "application/vnd.google-earth.kml+xml")}>KML</button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadText("mapbench-radius.gpx", geojsonToGpx(exportFc, "Radius circles"), "application/gpx+xml")}>GPX</button>
+            {!rings && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => setCircles([{ id: 1, center: circles[0]?.center ?? { lat: 40.7549, lng: -73.984 }, radiusKm: toKm(10, unit) }])}
+              >Clear</button>
+            )}
           </div>
         </div>
       </div>
@@ -216,6 +269,6 @@ function fmtArea(radiusKm: number, unit: UnitKey) {
   const perUnit: Record<UnitKey, [number, string]> = {
     km: [1, "km²"], mi: [0.386102, "mi²"], nmi: [0.291553, "NM²"], m: [1e6, "m²"], ft: [10763910, "ft²"],
   };
-  const [f, l] = perUnit[unit];
+  const [f, l] = perUnit[unit] ?? perUnit.mi;
   return `${(areaKm2 * f).toLocaleString("en-US", { maximumFractionDigits: areaKm2 * f > 1000 ? 0 : 2 })} ${l}`;
 }
