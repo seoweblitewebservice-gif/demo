@@ -83,6 +83,14 @@ export const CATEGORY_ESSAYS: Record<CategoryId, { title: string; paras: string[
       "Tracing these lines on a live map turns abstraction into place: thirteen countries under the Equator, eight under the Prime Meridian, the Date Line's great Kiribati bend. And clicking them reads coordinates back to you, which is the whole point of an interactive atlas — the grid stops being a diagram and becomes somewhere.",
     ],
   },
+  network: {
+    title: "Understanding IP addresses, geolocation and network details",
+    paras: [
+      "An IP address identifies a network connection on the Internet, not a precise physical person or address. Public IP lookup services can associate an address with a country, region, city, autonomous-system number, ISP or organization using routing and geolocation databases. These fields are estimates and can be affected by VPNs, mobile networks, carrier-grade NAT, proxies and corporate gateways.",
+      "IP geolocation is different from browser GPS. A browser can request device location with permission and may achieve much finer accuracy, while an IP database usually identifies the approximate area associated with the network. For that reason, IP results should be treated as network context rather than proof of where a person is physically standing.",
+      "Network metadata also changes over time. ISPs reassign addresses, organizations change providers and geolocation databases update their records. When accuracy matters, compare multiple signals and check the date and source of the data instead of treating an IP lookup as a permanent address record.",
+    ],
+  },
   population: {
     title: "People on maps: estimates, vintages and honest numbers",
     paras: [
