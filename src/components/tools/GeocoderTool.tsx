@@ -106,6 +106,16 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
     [FOCUS_LABELS.county, result.county], [FOCUS_LABELS.state, result.state], ["Postcode", result.postcode], ["Country", result.country ? `${result.country}${result.countryCode ? ` (${result.countryCode})` : ""}` : ""],
   ].filter(([, v]) => v) : [];
 
+  // Competitor-style clean fields for locate mode
+  const geoFields = result ? [
+    { label: "Country", value: result.country ? `${result.country}${result.countryCode ? ` (${result.countryCode})` : ""}` : "—", icon: "🌍" },
+    { label: "State", value: result.state || "—", icon: "📍" },
+    { label: "City", value: result.city || result.suburb || "—", icon: "🏙" },
+    { label: "Latitude", value: point ? point.lat.toFixed(6) : "—", icon: "🔴" },
+    { label: "Longitude", value: point ? point.lng.toFixed(6) : "—", icon: "🔴" },
+    { label: "Postal Code", value: result.postcode || "N/A", icon: "✉" },
+  ] : [];
+
   return (
     <div className="grid gap-4 lg:grid-cols-[400px,1fr]">
       <div className="card order-2 space-y-4 p-4 lg:order-1">
@@ -170,7 +180,46 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
         {busy && <Spinner label="Looking up address…" />}
         {error && <ErrorBox>{error}</ErrorBox>}
 
-        {result && !busy && (
+        {result && !busy && mode === "locate" && (
+          <div className="space-y-3 border-t border-line pt-4">
+            <div className="flex items-center gap-2">
+              <span className="rounded-md bg-brand-soft px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-brand-strong">Geolocation</span>
+              {locationDetails && <span className="text-[11px] text-mute">±{Math.round(locationDetails.accuracy)} m accuracy</span>}
+            </div>
+            <div className="space-y-2">
+              {geoFields.map((f) => (
+                <div key={f.label} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-well/50 px-3 py-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="text-base shrink-0" aria-hidden>{f.icon}</span>
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-mute">{f.label}</div>
+                      <div className="truncate text-sm font-medium text-ink">{f.value}</div>
+                    </div>
+                  </div>
+                  {f.value !== "—" && f.value !== "N/A" && <CopyBtn text={f.value} label="" />}
+                </div>
+              ))}
+            </div>
+            {result.displayName && (
+              <div className="rounded-lg border border-line px-3 py-2 text-xs leading-relaxed text-mute">
+                <span className="font-semibold text-ink">Full address: </span>{result.displayName}
+              </div>
+            )}
+            {ipFallback && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-900">
+                <strong>Approximate IP location</strong>
+                <div className="mt-1">{ipFallback.city}{ipFallback.region ? `, ${ipFallback.region}` : ""}{ipFallback.country ? `, ${ipFallback.country}` : ""}{ipFallback.org ? ` · ${ipFallback.org}` : ""}</div>
+                <div className="mt-0.5 text-[10px] opacity-80">IP: {ipFallback.ip}</div>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {point && <CopyBtn text={fmtCoords(point)} label="Copy coordinates" />}
+              {result.displayName && <CopyBtn text={result.displayName} label="Copy full address" />}
+            </div>
+          </div>
+        )}
+
+        {result && !busy && mode !== "locate" && (
           <div className="space-y-2 border-t border-line pt-3">
             <div className="text-sm leading-snug text-mute">{result.displayName}</div>
             {focus && breakdown.find(([k]) => k === FOCUS_LABELS[focus]) && (
@@ -179,7 +228,8 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
                 <div className="font-display text-xl font-bold text-brand-strong">{breakdown.find(([k]) => k === FOCUS_LABELS[focus])?.[1]}</div>
               </div>
             )}
-            {locationDetails && mode === "locate" && <div className="grid grid-cols-2 gap-2 rounded-lg bg-brand-soft p-3"><Stat label="GPS accuracy" value={`±${Math.round(locationDetails.accuracy)} m`} /><Stat label="Updated" value={new Date(locationDetails.timestamp).toLocaleTimeString()} />{locationDetails.altitude != null && <Stat label="Altitude" value={`${Math.round(locationDetails.altitude)} m`} />}{locationDetails.speed != null && locationDetails.speed >= 0 && <Stat label="Speed" value={`${(locationDetails.speed * 3.6).toFixed(1)} km/h`} />}</div>}{ipFallback && <div className="rounded-lg border border-line bg-well px-3 py-2 text-xs text-mute"><strong>Approximate IP location</strong><div className="mt-1">{ipFallback.city}, {ipFallback.region}, {ipFallback.country}{ipFallback.org ? ` · ${ipFallback.org}` : ""}</div></div>}
+            {locationDetails && <div className="grid grid-cols-2 gap-2 rounded-lg bg-brand-soft p-3"><Stat label="GPS accuracy" value={`±${Math.round(locationDetails.accuracy)} m`} /><Stat label="Updated" value={new Date(locationDetails.timestamp).toLocaleTimeString()} />{locationDetails.altitude != null && <Stat label="Altitude" value={`${Math.round(locationDetails.altitude)} m`} />}{locationDetails.speed != null && locationDetails.speed >= 0 && <Stat label="Speed" value={`${(locationDetails.speed * 3.6).toFixed(1)} km/h`} />}</div>}
+            {ipFallback && <div className="rounded-lg border border-line bg-well px-3 py-2 text-xs text-mute"><strong>Approximate IP location</strong><div className="mt-1">{ipFallback.city}, {ipFallback.region}, {ipFallback.country}{ipFallback.org ? ` · ${ipFallback.org}` : ""}</div></div>}
             <table className="tbl">
               <tbody>
                 {breakdown.map(([k, v]) => (
