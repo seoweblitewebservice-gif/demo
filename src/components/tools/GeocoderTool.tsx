@@ -85,6 +85,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
         } else setError(e?.message ?? "Could not determine your location.");
       } catch { setError(e?.message ?? "Could not determine your location."); }
     }
+  }
 
   const setPointAndLookup = (p: LatLng) => {
     setPoint(p);
