@@ -75,30 +75,123 @@ export function addressBreakdown(address: Record<string, string>) {
   };
 }
 
-export interface GeolocationDetails extends LatLng { accuracy: number; altitude?: number | null; heading?: number | null; speed?: number | null; timestamp: number }
+export interface GeolocationDetails extends LatLng {
+  accuracy: number;
+  altitude?: number | null;
+  heading?: number | null;
+  speed?: number | null;
+  timestamp: number;
+}
 
-export function geolocationDetails(): Promise<GeolocationDetails> {
+function geolocationOnce(options: PositionOptions): Promise<GeolocationDetails> {
   return new Promise((resolve, reject) => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       reject(new Error("This browser does not support geolocation."));
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy, altitude: pos.coords.altitude, heading: pos.coords.heading, speed: pos.coords.speed, timestamp: pos.timestamp }),
+      (pos) =>
+        resolve({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          altitude: pos.coords.altitude,
+          heading: pos.coords.heading,
+          speed: pos.coords.speed,
+          timestamp: pos.timestamp,
+        }),
       (err) => {
-        const msg = err.code === 1
-          ? "Location permission was denied. Enable it in your browser, or search for a place instead."
-          : err.code === 2
-            ? "Your position could not be determined. Try again, or search for a place instead."
-            : "Getting your position timed out. Try again, or search for a place instead.";
+        const msg =
+          err.code === 1
+            ? "Location permission was denied. Allow location for this site in your browser settings, or turn off VPN location blocking, then try again."
+            : err.code === 2
+              ? "Your position could not be determined. If a VPN is on, try turning it off or disable location-blocking in the VPN app, then retry."
+              : "Getting your position timed out. Try again outdoors, or with VPN off if location is blocked.";
         reject(new Error(msg));
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 },
+      options,
     );
   });
 }
 
+/**
+ * Prefer precise GPS; if that fails (common with VPN / indoors), fall back to
+ * network-based location. Browser geolocation uses the device sensors — not
+ * the VPN IP — but many VPN apps block or delay location APIs.
+ */
+export async function geolocationDetails(): Promise<GeolocationDetails> {
+  try {
+    return await geolocationOnce({
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 60000,
+    });
+  } catch (first) {
+    try {
+      return await geolocationOnce({
+        enableHighAccuracy: false,
+        timeout: 15000,
+        maximumAge: 120000,
+      });
+    } catch {
+      throw first instanceof Error ? first : new Error("Could not determine your location.");
+    }
+  }
+}
 
 export function geolocation(): Promise<LatLng> {
   return geolocationDetails().then(({ lat, lng }) => ({ lat, lng }));
+}
+
+/** IP-based approximate location (affected by VPN exit node). */
+export async function ipGeolocation(): Promise<{
+  lat: number;
+  lng: number;
+  ip: string;
+  city?: string;
+  region?: string;
+  country?: string;
+  org?: string;
+} | null> {
+  const tryIpwho = async () => {
+    const res = await fetch("https://ipwho.is/");
+    const data = await res.json();
+    if (data?.success && Number.isFinite(data.latitude) && Number.isFinite(data.longitude)) {
+      return {
+        lat: Number(data.latitude),
+        lng: Number(data.longitude),
+        ip: String(data.ip ?? ""),
+        city: data.city,
+        region: data.region,
+        country: data.country,
+        org: data.connection?.org,
+      };
+    }
+    return null;
+  };
+  const tryIpapi = async () => {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    if (Number.isFinite(data?.latitude) && Number.isFinite(data?.longitude)) {
+      return {
+        lat: Number(data.latitude),
+        lng: Number(data.longitude),
+        ip: String(data.ip ?? ""),
+        city: data.city,
+        region: data.region,
+        country: data.country_name,
+        org: data.org,
+      };
+    }
+    return null;
+  };
+  try {
+    return (await tryIpwho()) ?? (await tryIpapi());
+  } catch {
+    try {
+      return await tryIpapi();
+    } catch {
+      return null;
+    }
+  }
 }

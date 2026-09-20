@@ -2,9 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { Map as MLMap } from "maplibre-gl";
 import { fmtCoords, isValidLat, isValidLng, parseCoordPair, type LatLng } from "@/lib/geo";
-import { addressBreakdown, geolocation, geolocationDetails, nominatimReverse } from "@/lib/geocode";
+import { addressBreakdown, geolocationDetails, ipGeolocation, nominatimReverse } from "@/lib/geocode";
 import { readUrlParams, syncUrl, CopyBtn, ErrorBox, Spinner, Stat, Field } from "@/components/ui";
-import { DynamicMap, pinElement, PlaceField, type PlaceValue } from "./shared";
+import { DynamicMap, pinElement, type PlaceValue } from "./shared";
 import LocationSearch from "@/components/LocationSearch";
 
 type CountryMeta = { name?: string; capital?: string; region?: string; population?: number; area?: number; currency?: string; callingCode?: string; languages?: string; flag?: string };
@@ -65,7 +65,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
   }, []);
 
   const locate = async () => {
-    setBusy(true); setError(null); setIpFallback(null);
+    setBusy(true); setError(null); setIpFallback(null); setLocationDetails(null);
     try {
       const d = await geolocationDetails();
       const p = { lat: d.lat, lng: d.lng };
@@ -74,18 +74,28 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
       await reverseLookup(p);
       mapRef.current?.flyTo({ center: [p.lng, p.lat], zoom: 15, essential: true });
     } catch (e: any) {
+      const gpsMsg = e?.message ?? "Could not determine your location.";
       try {
-        const res = await fetch("https://ipwho.is/");
-        const data = await res.json();
-        if (data?.success && Number.isFinite(data.latitude) && Number.isFinite(data.longitude)) {
-          const p = { lat: Number(data.latitude), lng: Number(data.longitude) };
-          setPoint(p); setIpFallback({ ip: data.ip, city: data.city, region: data.region, country: data.country, org: data.connection?.org });
+        const ip = await ipGeolocation();
+        if (ip) {
+          const p = { lat: ip.lat, lng: ip.lng };
+          setPoint(p);
+          setIpFallback({ ip: ip.ip, city: ip.city, region: ip.region, country: ip.country, org: ip.org });
           await reverseLookup(p);
-          setError("Precise browser location was unavailable, so this is an approximate IP-based location.");
-        } else setError(e?.message ?? "Could not determine your location.");
-      } catch { setError(e?.message ?? "Could not determine your location."); }
+          mapRef.current?.flyTo({ center: [p.lng, p.lat], zoom: 10, essential: true });
+          setError(
+            "Precise device location was unavailable (VPN or permission can block it). Showing approximate IP location — with a VPN this is usually the VPN server city, not your real address.",
+          );
+        } else {
+          setError(gpsMsg + " IP fallback also failed. Allow location permission, or turn off VPN location-blocking, then try again.");
+        }
+      } catch {
+        setError(gpsMsg);
+      }
+    } finally {
+      setBusy(false);
     }
-  }
+  };
 
   const setPointAndLookup = (p: LatLng) => {
     setPoint(p);
@@ -106,7 +116,6 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
     [FOCUS_LABELS.county, result.county], [FOCUS_LABELS.state, result.state], ["Postcode", result.postcode], ["Country", result.country ? `${result.country}${result.countryCode ? ` (${result.countryCode})` : ""}` : ""],
   ].filter(([, v]) => v) : [];
 
-  // Competitor-style clean fields for locate mode
   const geoFields = result ? [
     { label: "Country", value: result.country ? `${result.country}${result.countryCode ? ` (${result.countryCode})` : ""}` : "—", icon: "🌍" },
     { label: "State", value: result.state || "—", icon: "📍" },
@@ -120,9 +129,14 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
     <div className="grid gap-4 lg:grid-cols-[400px,1fr]">
       <div className="card order-2 space-y-4 p-4 lg:order-1">
         {mode === "locate" && (
-          <button type="button" className="btn btn-primary w-full" onClick={locate} disabled={busy}>
-            {busy ? <Spinner label="Locating…" /> : "📍 Use my location"}
-          </button>
+          <>
+            <button type="button" className="btn btn-primary w-full" onClick={locate} disabled={busy}>
+              {busy ? <Spinner label="Locating…" /> : "📍 Use my location"}
+            </button>
+            <p className="text-[11px] leading-relaxed text-mute">
+              Uses your device GPS/Wi‑Fi when allowed. A VPN can block precise location — turn off VPN location-blocking or allow site permission for best results.
+            </p>
+          </>
         )}
         {mode === "forward" ? (
           <>
@@ -185,6 +199,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
             <div className="flex items-center gap-2">
               <span className="rounded-md bg-brand-soft px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-brand-strong">Geolocation</span>
               {locationDetails && <span className="text-[11px] text-mute">±{Math.round(locationDetails.accuracy)} m accuracy</span>}
+              {ipFallback && !locationDetails && <span className="text-[11px] text-amber-700">IP approximate</span>}
             </div>
             <div className="space-y-2">
               {geoFields.map((f) => (
@@ -209,7 +224,7 @@ export default function GeocoderTool({ params }: { params?: Record<string, unkno
               <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-900">
                 <strong>Approximate IP location</strong>
                 <div className="mt-1">{ipFallback.city}{ipFallback.region ? `, ${ipFallback.region}` : ""}{ipFallback.country ? `, ${ipFallback.country}` : ""}{ipFallback.org ? ` · ${ipFallback.org}` : ""}</div>
-                <div className="mt-0.5 text-[10px] opacity-80">IP: {ipFallback.ip}</div>
+                <div className="mt-0.5 text-[10px] opacity-80">IP: {ipFallback.ip} — with VPN this is usually the VPN exit city, not your home.</div>
               </div>
             )}
             <div className="flex flex-wrap gap-2 pt-1">
