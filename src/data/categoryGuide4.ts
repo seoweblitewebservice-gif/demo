@@ -134,4 +134,16 @@ export const LIMITS: Record<CategoryId, { paras: string[]; escalate: string[] }>
       "Published citations → primary sources with vintages, not snapshots.",
     ],
   },
+  network: {
+    paras: [
+      "IP geolocation and network lookups have a hard competence boundary: they describe the network attachment, not the person or the precise street. City and region fields are database estimates that degrade under VPN, mobile, CGNAT and anycast. Treating an IP city pin as a GPS fix is the most common misuse.",
+      "Within that boundary the tools are useful for triage, localisation and rough audience analysis when the limitations are stated. Escalation for high-stakes identity or location claims is always offline verification, legal process or device-level consent — never an IP database alone.",
+    ],
+    escalate: [
+      "Legal or identity claims → due process and offline verification, not IP databases.",
+      "Precise user location → browser GPS with consent, never IP alone.",
+      "Abuse at scale → multiple telemetry sources and your own threat intel.",
+      "Regulatory geoblocking → licensed geo databases with contractual SLAs.",
+    ],
+  },
 };
