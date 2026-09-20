@@ -25,9 +25,9 @@ export default function ToolClient({ slug, locale }: { slug: string; locale?: Lo
     <div>
       <nav aria-label="Breadcrumb" className="mb-3 text-xs text-mute">
         <ol className="flex flex-wrap items-center gap-1.5">
-          <li><Link href={prefix || "/"} className="hover:text-brand-strong">{locale ? getLocaleUI(locale).home : "Home"}</Link></li>
+          <li><Link href={prefix || "/"} className="hover:text-brand-strong">{locale ? LOCALE_LABELS[locale].home : "Home"}</Link></li>
           <li aria-hidden>/</li>
-          <li><Link href={prefix + "/tools"} className="hover:text-brand-strong">{locale ? getLocaleUI(locale).tools : "Tools"}</Link></li>
+          <li><Link href={prefix + "/tools"} className="hover:text-brand-strong">{locale ? LOCALE_LABELS[locale].tools : "Tools"}</Link></li>
           {category && (<><li aria-hidden>/</li><li><Link href={prefix + "/tools?cat=" + category.id} className="hover:text-brand-strong">{locale ? CATEGORY_LABELS[locale][category.id] ?? category.label : category.label}</Link></li></>)}
           <li aria-hidden>/</li>
           <li aria-current="page" className="font-semibold text-ink">{localized?.name ?? tool.name}</li>
