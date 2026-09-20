@@ -7,8 +7,8 @@ import { downloadText } from "@/lib/formats";
 import { readUrlParams, syncUrl, Seg, Spinner, ErrorBox } from "@/components/ui";
 import { DynamicMap, pinElement, PlaceField, type PlaceValue } from "./shared";
 
-const CONTOUR_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
-const COLORS = ["#14584f", "#1d6e63", "#2a8578", "#479e92", "#d95d32", "#b45309", "#9d174d"];
+const CONTOUR_OPTIONS = [10, 15, 20, 30, 45, 60, 90, 120];
+const COLORS = ["#14584f", "#1d6e63", "#2a8578", "#479e92", "#d95d32", "#b45309", "#9d174d", "#7c2d12"];
 
 export default function DriveTimeTool({ params }: { params?: Record<string, unknown> }) {
   const [mode, setMode] = useState<TravelMode>("driving");
@@ -16,7 +16,7 @@ export default function DriveTimeTool({ params }: { params?: Record<string, unkn
     const c = readUrlParams().get("t");
     if (c) return c.split(",").map(Number).filter((n) => CONTOUR_OPTIONS.includes(n)).slice(0, 4);
     if (Array.isArray(params?.contours)) return (params!.contours as number[]).filter((n) => CONTOUR_OPTIONS.includes(n)).slice(0, 4);
-    return params?.serviceArea ? [15] : [5, 10, 15];
+    return params?.serviceArea ? [15] : [15, 30];
   });
   const [center, setCenter] = useState<PlaceValue | null>(() => {
     const p = readUrlParams();
@@ -69,15 +69,15 @@ export default function DriveTimeTool({ params }: { params?: Record<string, unkn
     }
   };
 
-  const toggleContour = (c: number) => setContours((cs) => cs.includes(c) ? cs.filter((x) => x !== c) : [...cs, c].sort((a, b) => a - b));
+  const toggleContour = (c: number) => setContours((cs) => cs.includes(c) ? cs.filter((x) => x !== c) : [...cs, c].sort((a, b) => a - b).slice(0, 4));
 
   return (
     <div className="grid gap-4 lg:grid-cols-[380px,1fr]">
       <div className="card order-2 space-y-4 p-4 lg:order-1">
-        <PlaceField label="Starting point" value={center} onChange={(v) => { setCenter(v); if (v) mapRef.current?.flyTo({ center: [v.lng, v.lat], zoom: 13, essential: true }); }} placeholder="Base location…" />
+        <PlaceField label="Starting point" value={center} onChange={(v) => { setCenter(v); if (v) mapRef.current?.flyTo({ center: [v.lng, v.lat], zoom: 13, essential: true }); }} placeholder="Search address or click map…" />
         <div>
           <span className="label">Travel mode</span>
-          <Seg options={[{ value: "driving" as TravelMode, label: "🚗 Drive" }, { value: "walking" as TravelMode, label: "🚶 Walk" }, { value: "cycling" as TravelMode, label: "🚴 Cycle" }]} value={mode} onChange={setMode} ariaLabel="Travel mode" />
+          <Seg options={[{ value: "driving" as TravelMode, label: "🚗 Drive" }, { value: "cycling" as TravelMode, label: "🚲 Bike" }, { value: "walking" as TravelMode, label: "🚶 Walk" }]} value={mode} onChange={setMode} ariaLabel="Travel mode" />
         </div>
         <div>
           <span className="label">Time contours (minutes)</span>
@@ -93,7 +93,7 @@ export default function DriveTimeTool({ params }: { params?: Record<string, unkn
               </button>
             ))}
           </div>
-          <p className="mt-1.5 text-xs text-mute">Up to 4 contours per request to keep the free service fast.</p>
+          <p className="mt-1.5 text-xs text-mute">Select up to 4 contours. Multiple times show layered reachable areas.</p>
         </div>
         <button type="button" className="btn btn-primary w-full" onClick={generate} disabled={busy}>
           {busy ? <Spinner label="Computing reachable area…" /> : "Generate reachable area"}
@@ -105,7 +105,7 @@ export default function DriveTimeTool({ params }: { params?: Record<string, unkn
             <ul className="space-y-1 text-xs text-mute">
               {contours.map((c) => <li key={c} className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: COLORS[CONTOUR_OPTIONS.indexOf(c) % COLORS.length] }} /> within {c} minutes</li>)}
             </ul>
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => downloadText("mapforge-isochrone.geojson", JSON.stringify(geo, null, 2), "application/geo+json")}>Export GeoJSON</button>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => downloadText("mapbench-isochrone.geojson", JSON.stringify(geo, null, 2), "application/geo+json")}>Export GeoJSON</button>
           </div>
         )}
       </div>
@@ -117,7 +117,7 @@ export default function DriveTimeTool({ params }: { params?: Record<string, unkn
             id: "iso-fill", type: "fill", source: "iso",
             paint: {
               "fill-color": ["match", ["to-number", ["get", "contour"]],
-                5, COLORS[0], 10, COLORS[1], 15, COLORS[2], 20, COLORS[3], 30, COLORS[4], 45, COLORS[5], 60, COLORS[6], "#1d6e63"],
+                10, COLORS[0], 15, COLORS[1], 20, COLORS[2], 30, COLORS[3], 45, COLORS[4], 60, COLORS[5], 90, COLORS[6], 120, COLORS[7], "#1d6e63"],
               "fill-opacity": 0.22,
             },
           });
@@ -125,7 +125,7 @@ export default function DriveTimeTool({ params }: { params?: Record<string, unkn
             id: "iso-line", type: "line", source: "iso",
             paint: {
               "line-color": ["match", ["to-number", ["get", "contour"]],
-                5, COLORS[0], 10, COLORS[1], 15, COLORS[2], 20, COLORS[3], 30, COLORS[4], 45, COLORS[5], 60, COLORS[6], "#1d6e63"],
+                10, COLORS[0], 15, COLORS[1], 20, COLORS[2], 30, COLORS[3], 45, COLORS[4], 60, COLORS[5], 90, COLORS[6], 120, COLORS[7], "#1d6e63"],
               "line-width": 2,
             },
           });
