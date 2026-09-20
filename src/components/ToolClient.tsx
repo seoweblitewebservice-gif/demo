@@ -8,13 +8,25 @@ import { toolComponents } from "./tools";
 import { Spinner } from "./ui";
 import { getLocalizedTool } from "@/data/localizedTools";
 import type { Locale } from "@/lib/i18n";
-import { getLocaleUI, CATEGORY_LABELS, LOCALE_LABELS } from "@/lib/i18n";
+import { getLocaleUI, CATEGORY_LABELS } from "@/lib/i18n";
 
 export default function ToolClient({ slug, locale }: { slug: string; locale?: Locale }) {
   const tool = toolBySlug.get(slug);
   const localized = locale ? getLocalizedTool(locale, slug) : undefined;
   const ui = locale ? getLocaleUI(locale) : null;
   const prefix = locale ? `/${locale}` : "";
+  const homeLabel = locale ? ({
+    es: "Inicio", de: "Startseite", fr: "Accueil", it: "Home", pt: "Início", nl: "Home",
+    pl: "Strona główna", ru: "Главная", sv: "Hem", da: "Forside", no: "Hjem", fi: "Etusivu",
+    cs: "Domů", ro: "Acasă", el: "Αρχική", hu: "Kezdőlap", tr: "Ana sayfa", uk: "Головна",
+    ar: "الرئيسية", ja: "ホーム", ko: "홈", zh: "首页", hi: "होम",
+  } as Record<Locale, string>)[locale] : "Home";
+  const toolsLabel = locale ? ({
+    es: "Herramientas", de: "Werkzeuge", fr: "Outils", it: "Strumenti", pt: "Ferramentas", nl: "Tools",
+    pl: "Narzędzia", ru: "Инструменты", sv: "Verktyg", da: "Værktøjer", no: "Verktøy", fi: "Työkalut",
+    cs: "Nástroje", ro: "Instrumente", el: "Εργαλεία", hu: "Eszközök", tr: "Araçlar", uk: "Інструменти",
+    ar: "الأدوات", ja: "ツール", ko: "도구", zh: "工具", hi: "टूल्स",
+  } as Record<Locale, string>)[locale] : "Tools";
   if (!tool) return null;
   const category = CATEGORIES.find((c) => c.id === tool.category);
   const Component = toolComponents[tool.component];
@@ -25,9 +37,9 @@ export default function ToolClient({ slug, locale }: { slug: string; locale?: Lo
     <div>
       <nav aria-label="Breadcrumb" className="mb-3 text-xs text-mute">
         <ol className="flex flex-wrap items-center gap-1.5">
-          <li><Link href={prefix || "/"} className="hover:text-brand-strong">{locale ? LOCALE_LABELS[locale].home : "Home"}</Link></li>
+          <li><Link href={prefix || "/"} className="hover:text-brand-strong">{homeLabel}</Link></li>
           <li aria-hidden>/</li>
-          <li><Link href={prefix + "/tools"} className="hover:text-brand-strong">{locale ? LOCALE_LABELS[locale].tools : "Tools"}</Link></li>
+          <li><Link href={prefix + "/tools"} className="hover:text-brand-strong">{toolsLabel}</Link></li>
           {category && (<><li aria-hidden>/</li><li><Link href={prefix + "/tools?cat=" + category.id} className="hover:text-brand-strong">{locale ? CATEGORY_LABELS[locale][category.id] ?? category.label : category.label}</Link></li></>)}
           <li aria-hidden>/</li>
           <li aria-current="page" className="font-semibold text-ink">{localized?.name ?? tool.name}</li>
