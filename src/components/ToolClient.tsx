@@ -8,7 +8,7 @@ import { toolComponents } from "./tools";
 import { Spinner } from "./ui";
 import { getLocalizedTool } from "@/data/localizedTools";
 import type { Locale } from "@/lib/i18n";
-import { getLocaleUI, CATEGORY_LABELS } from "@/lib/i18n";
+import { getLocaleUI, CATEGORY_LABELS, LOCALE_LABELS } from "@/lib/i18n";
 
 export default function ToolClient({ slug, locale }: { slug: string; locale?: Locale }) {
   const tool = toolBySlug.get(slug);
