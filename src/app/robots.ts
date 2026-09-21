@@ -8,16 +8,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/api/"],
       },
-      {
-        userAgent: "GPTBot",
-        allow: "/",
-        disallow: ["/api/"],
-      },
-      {
-        userAgent: "Google-Extended",
-        allow: "/",
-        disallow: ["/api/"],
-      },
     ],
     sitemap: "https://www.mapbench.site/sitemap.xml",
     host: "https://www.mapbench.site",

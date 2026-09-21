@@ -5,7 +5,19 @@ import { LOCALES } from "@/lib/i18n";
 import { isToolLocalized } from "@/data/localizedTools";
 import countriesTopo from "world-atlas/countries-110m.json";
 
+/**
+ * Google Sitemap Protocol sitemap.
+ * Next.js serializes this to valid XML:
+ *   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+ *     <url><loc>…</loc><lastmod>…</lastmod>…</url>
+ *   </urlset>
+ * Only absolute HTTPS canonical URLs for indexable pages (HTTP 200 routes).
+ * Excludes: /api/*, query params, noindex, placeholders, duplicates.
+ */
 const BASE = "https://www.mapbench.site";
+
+/** Stable lastmod so the sitemap does not rewrite every request. */
+const SITE_LASTMOD = new Date("2026-09-21");
 
 const slugify = (value: string) =>
   value
@@ -15,125 +27,149 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-function englishOnly(path: string) {
-  const p = path || "/";
-  return { en: `${BASE}${p}`, "x-default": `${BASE}${p}` };
+function entry(
+  path: string,
+  opts: {
+    lastModified?: Date;
+    changeFrequency?: MetadataRoute.Sitemap[number]["changeFrequency"];
+    priority?: number;
+    languages?: Record<string, string>;
+  } = {},
+): MetadataRoute.Sitemap[number] {
+  const loc = path === "/" || path === "" ? BASE : `${BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  const item: MetadataRoute.Sitemap[number] = {
+    url: loc,
+    lastModified: opts.lastModified ?? SITE_LASTMOD,
+    changeFrequency: opts.changeFrequency ?? "monthly",
+    priority: opts.priority ?? 0.5,
+  };
+  if (opts.languages && Object.keys(opts.languages).length > 0) {
+    item.alternates = { languages: opts.languages };
+  }
+  return item;
 }
 
-function localizedToolAlternates(path: string, slug: string) {
-  return Object.fromEntries([
-    ["en", `${BASE}${path}`],
-    ["x-default", `${BASE}${path}`],
-    ...LOCALES.filter((locale) => isToolLocalized(locale, slug)).map((locale) => [
-      locale,
-      `${BASE}/${locale}${path}`,
-    ]),
-  ]);
+function toolHreflang(slug: string): Record<string, string> {
+  const path = `/tools/${slug}`;
+  const langs: Record<string, string> = {
+    en: `${BASE}${path}`,
+    "x-default": `${BASE}${path}`,
+  };
+  for (const locale of LOCALES) {
+    if (isToolLocalized(locale, slug)) {
+      langs[locale] = `${BASE}/${locale}${path}`;
+    }
+  }
+  return langs;
 }
 
-/** All country blank-map pages from Natural Earth geometries */
-const countryPages: MetadataRoute.Sitemap = Array.from(
-  new Set(
-    ((countriesTopo as { objects: { countries: { geometries: { properties?: { name?: string } }[] } } }).objects
-      .countries.geometries as { properties?: { name?: string } }[])
-      .map((g) => g.properties?.name)
-      .filter((n): n is string => Boolean(n)),
-  ),
-)
-  .map((name) => ({
-    url: `${BASE}/maps/blank/${slugify(name)}`,
-    changeFrequency: "monthly" as const,
-    priority: 0.65,
-    lastModified: new Date("2026-01-01"),
-  }))
-  .sort((a, b) => a.url.localeCompare(b.url));
+/** Country blank maps from Natural Earth — each has a real /maps/blank/[slug] page. */
+function countryBlankEntries(): MetadataRoute.Sitemap {
+  const names = new Set<string>();
+  const geometries =
+    (countriesTopo as { objects?: { countries?: { geometries?: { properties?: { name?: string } }[] } } })
+      ?.objects?.countries?.geometries ?? [];
+  for (const g of geometries) {
+    const name = g?.properties?.name;
+    if (name) names.add(name);
+  }
+  return Array.from(names)
+    .map((name) => slugify(name))
+    .filter(Boolean)
+    .sort()
+    .map((slug) =>
+      entry(`/maps/blank/${slug}`, {
+        changeFrequency: "monthly",
+        priority: 0.6,
+        lastModified: new Date("2026-01-01"),
+      }),
+    );
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const urls: MetadataRoute.Sitemap = [];
 
-  // Core static pages
-  const staticDefs: { path: string; priority: number; changeFrequency: "weekly" | "monthly" | "yearly" }[] = [
-    { path: "", priority: 1, changeFrequency: "weekly" },
-    { path: "/tools", priority: 0.95, changeFrequency: "weekly" },
-    { path: "/maps", priority: 0.9, changeFrequency: "weekly" },
-    { path: "/guides", priority: 0.75, changeFrequency: "weekly" },
-    { path: "/about", priority: 0.5, changeFrequency: "monthly" },
-    { path: "/methodology", priority: 0.5, changeFrequency: "monthly" },
-    { path: "/data-sources", priority: 0.5, changeFrequency: "monthly" },
-    { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
-    { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
-    { path: "/contact", priority: 0.4, changeFrequency: "monthly" },
+  // —— Core English static pages (all return 200, indexable) ——
+  const staticPages: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
+    { path: "/", priority: 1.0, freq: "weekly" },
+    { path: "/tools", priority: 0.95, freq: "weekly" },
+    { path: "/maps", priority: 0.9, freq: "weekly" },
+    { path: "/guides", priority: 0.75, freq: "weekly" },
+    { path: "/about", priority: 0.5, freq: "monthly" },
+    { path: "/methodology", priority: 0.5, freq: "monthly" },
+    { path: "/data-sources", priority: 0.5, freq: "monthly" },
+    { path: "/contact", priority: 0.4, freq: "monthly" },
+    { path: "/privacy", priority: 0.3, freq: "yearly" },
+    { path: "/terms", priority: 0.3, freq: "yearly" },
   ];
+  for (const p of staticPages) {
+    urls.push(
+      entry(p.path, {
+        priority: p.priority,
+        changeFrequency: p.freq,
+        languages: {
+          en: p.path === "/" ? `${BASE}/` : `${BASE}${p.path}`,
+          "x-default": p.path === "/" ? `${BASE}/` : `${BASE}${p.path}`,
+        },
+      }),
+    );
+  }
 
-  const staticPages: MetadataRoute.Sitemap = staticDefs.map(({ path, priority, changeFrequency }) => ({
-    url: `${BASE}${path}`,
-    lastModified: now,
-    changeFrequency,
-    priority,
-    alternates: { languages: englishOnly(path || "/") },
-  }));
+  // —— Locale home + tools + guides indexes (routes exist under src/app/[locale]) ——
+  for (const locale of LOCALES) {
+    urls.push(entry(`/${locale}`, { priority: 0.7, changeFrequency: "weekly" }));
+    urls.push(entry(`/${locale}/tools`, { priority: 0.65, changeFrequency: "weekly" }));
+    urls.push(entry(`/${locale}/guides`, { priority: 0.45, changeFrequency: "monthly" }));
+  }
 
-  // Locale home + tools index (where locale routes exist)
-  const localeIndexPages: MetadataRoute.Sitemap = LOCALES.flatMap((locale) => [
-    {
-      url: `${BASE}/${locale}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${BASE}/${locale}/tools`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.65,
-    },
-    {
-      url: `${BASE}/${locale}/guides`,
-      lastModified: now,
-      changeFrequency: "monthly" as const,
-      priority: 0.45,
-    },
-  ]);
+  // —— English tool pages ——
+  for (const t of TOOLS) {
+    urls.push(
+      entry(`/tools/${t.slug}`, {
+        priority: t.popular ? 0.85 : 0.7,
+        changeFrequency: "monthly",
+        languages: toolHreflang(t.slug),
+      }),
+    );
+  }
 
-  // English tool pages
-  const toolPages: MetadataRoute.Sitemap = TOOLS.map((t) => ({
-    url: `${BASE}/tools/${t.slug}`,
-    lastModified: now,
-    changeFrequency: "monthly" as const,
-    priority: t.popular ? 0.85 : 0.72,
-    alternates: {
-      languages: localizedToolAlternates(`/tools/${t.slug}`, t.slug),
-    },
-  }));
+  // —— Localized tools only when localized copy exists (avoids thin/empty locale URLs) ——
+  for (const locale of LOCALES) {
+    for (const t of TOOLS) {
+      if (!isToolLocalized(locale, t.slug)) continue;
+      urls.push(
+        entry(`/${locale}/tools/${t.slug}`, {
+          priority: t.popular ? 0.65 : 0.55,
+          changeFrequency: "monthly",
+          languages: toolHreflang(t.slug),
+        }),
+      );
+    }
+  }
 
-  // Localized tool pages (only when copy exists)
-  const localizedTools: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
-    TOOLS.filter((t) => isToolLocalized(locale, t.slug)).map((t) => ({
-      url: `${BASE}/${locale}/tools/${t.slug}`,
-      lastModified: now,
-      changeFrequency: "monthly" as const,
-      priority: t.popular ? 0.68 : 0.55,
-      alternates: {
-        languages: localizedToolAlternates(`/tools/${t.slug}`, t.slug),
-      },
-    })),
-  );
+  // —— Guides ——
+  for (const g of ALL_GUIDES) {
+    urls.push(
+      entry(`/guides/${g.slug}`, {
+        lastModified: g.date ? new Date(g.date) : SITE_LASTMOD,
+        priority: 0.55,
+        changeFrequency: "yearly",
+      }),
+    );
+  }
 
-  // Blog / guides
-  const guidePages: MetadataRoute.Sitemap = ALL_GUIDES.map((g) => ({
-    url: `${BASE}/guides/${g.slug}`,
-    lastModified: new Date(g.date),
-    changeFrequency: "yearly" as const,
-    priority: 0.55,
-    alternates: { languages: englishOnly(`/guides/${g.slug}`) },
-  }));
+  // —— Blank country maps ——
+  urls.push(...countryBlankEntries());
 
-  return [
-    ...staticPages,
-    ...localeIndexPages,
-    ...toolPages,
-    ...localizedTools,
-    ...guidePages,
-    ...countryPages,
-  ];
+  // Deduplicate by loc (keep first / highest priority order above)
+  const seen = new Set<string>();
+  const deduped: MetadataRoute.Sitemap = [];
+  for (const item of urls) {
+    const key = item.url.replace(/\/$/, "") || BASE;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(item);
+  }
+
+  return deduped;
 }
