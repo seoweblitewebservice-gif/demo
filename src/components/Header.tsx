@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORIES, TOOLS } from "@/lib/registry";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export function Logo() {
   return (
@@ -194,9 +195,12 @@ export default function Header() {
           >
             Search <kbd className="ml-1 text-[10px]">⌘K</kbd>
           </button>
+          {/* Language — right side of bar */}
+          <LanguageSwitcher />
           <ThemeToggle />
         </nav>
-        <div className="ml-auto flex items-center gap-2 md:hidden">
+        <div className="ml-auto flex items-center gap-1 md:hidden">
+          <LanguageSwitcher />
           <ThemeToggle />
           <button type="button" className="btn btn-ghost btn-sm" aria-expanded={open} aria-label="Toggle menu" onClick={() => setOpen((v) => !v)}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
