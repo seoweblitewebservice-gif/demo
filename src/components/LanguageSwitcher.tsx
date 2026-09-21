@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { LOCALES, LOCALE_NAMES, isLocale, type Locale } from "@/lib/i18n";
+import { isToolLocalized } from "@/data/localizedTools";
 
 const EN_LABEL = "English";
 
-/** Build path for a target language, preserving tool/page when possible. */
 function pathForLocale(pathname: string, target: "en" | Locale): string {
   const parts = pathname.split("/").filter(Boolean);
   const first = parts[0];
@@ -17,16 +17,18 @@ function pathForLocale(pathname: string, target: "en" | Locale): string {
   }
 
   if (rest.length === 0) return `/${target}`;
+
+  // tools/{slug} — always allow locale URL (page falls back to EN if no copy)
   if (rest[0] === "tools" || rest[0] === "guides") {
     return `/${target}/${rest.join("/")}`;
   }
+
   return `/${target}`;
 }
 
 export default function LanguageSwitcher({
   locale: localeProp,
 }: {
-  /** Optional hint from server pages; pathname is still the source of truth. */
   locale?: Locale | string;
 } = {}) {
   const pathname = usePathname() || "/";
@@ -34,12 +36,21 @@ export default function LanguageSwitcher({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const first = pathname.split("/").filter(Boolean)[0];
+  const parts = pathname.split("/").filter(Boolean);
+  const first = parts[0];
   const fromPath: "en" | Locale = first && isLocale(first) ? first : "en";
   const fromProp =
     localeProp && isLocale(localeProp) ? (localeProp as Locale) : null;
   const current: "en" | Locale = fromProp ?? fromPath;
   const currentLabel = current === "en" ? "EN" : current.toUpperCase();
+
+  // Detect current tool slug for translation badges
+  const pathWithoutLocale =
+    first && isLocale(first) ? parts.slice(1) : parts;
+  const toolSlug =
+    pathWithoutLocale[0] === "tools" && pathWithoutLocale[1]
+      ? pathWithoutLocale[1]
+      : null;
 
   useEffect(() => {
     setOpen(false);
@@ -87,7 +98,7 @@ export default function LanguageSwitcher({
         <div
           role="listbox"
           aria-label="Languages"
-          className="absolute right-0 top-full z-50 mt-1 max-h-[70vh] w-52 overflow-y-auto rounded-lg border border-line bg-card py-1 shadow-xl"
+          className="absolute right-0 top-full z-50 mt-1 max-h-[70vh] w-56 overflow-y-auto rounded-lg border border-line bg-card py-1 shadow-xl"
         >
           <button
             type="button"
@@ -102,26 +113,35 @@ export default function LanguageSwitcher({
             {current === "en" && <span className="text-[11px]">✓</span>}
           </button>
           <div className="my-1 border-t border-line" />
-          {LOCALES.map((locale) => (
-            <button
-              key={locale}
-              type="button"
-              role="option"
-              aria-selected={current === locale}
-              className={`flex w-full items-center justify-between px-3 py-2 text-left text-[13px] font-semibold hover:bg-brand-soft ${
-                current === locale ? "text-brand-strong" : "text-ink"
-              }`}
-              onClick={() => select(locale)}
-            >
-              <span>
-                <span className="mr-2 inline-block w-7 text-[11px] font-extrabold uppercase text-mute">
-                  {locale}
+          {LOCALES.map((locale) => {
+            const hasFull =
+              !toolSlug || isToolLocalized(locale, toolSlug);
+            return (
+              <button
+                key={locale}
+                type="button"
+                role="option"
+                aria-selected={current === locale}
+                className={`flex w-full items-center justify-between px-3 py-2 text-left text-[13px] font-semibold hover:bg-brand-soft ${
+                  current === locale ? "text-brand-strong" : "text-ink"
+                }`}
+                onClick={() => select(locale)}
+              >
+                <span>
+                  <span className="mr-2 inline-block w-7 text-[11px] font-extrabold uppercase text-mute">
+                    {locale}
+                  </span>
+                  {LOCALE_NAMES[locale]}
+                  {!hasFull && (
+                    <span className="ml-1 text-[10px] font-medium text-mute">
+                      (EN tool)
+                    </span>
+                  )}
                 </span>
-                {LOCALE_NAMES[locale]}
-              </span>
-              {current === locale && <span className="text-[11px]">✓</span>}
-            </button>
-          ))}
+                {current === locale && <span className="text-[11px]">✓</span>}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
