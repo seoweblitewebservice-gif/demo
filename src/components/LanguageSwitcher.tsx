@@ -16,23 +16,29 @@ function pathForLocale(pathname: string, target: "en" | Locale): string {
     return rest.length ? `/${rest.join("/")}` : "/";
   }
 
-  // Locale routes: home, tools index, guides index, tool pages
   if (rest.length === 0) return `/${target}`;
   if (rest[0] === "tools" || rest[0] === "guides") {
     return `/${target}/${rest.join("/")}`;
   }
-  // Other EN-only pages → locale home
   return `/${target}`;
 }
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({
+  locale: localeProp,
+}: {
+  /** Optional hint from server pages; pathname is still the source of truth. */
+  locale?: Locale | string;
+} = {}) {
   const pathname = usePathname() || "/";
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const first = pathname.split("/").filter(Boolean)[0];
-  const current: "en" | Locale = first && isLocale(first) ? first : "en";
+  const fromPath: "en" | Locale = first && isLocale(first) ? first : "en";
+  const fromProp =
+    localeProp && isLocale(localeProp) ? (localeProp as Locale) : null;
+  const current: "en" | Locale = fromProp ?? fromPath;
   const currentLabel = current === "en" ? "EN" : current.toUpperCase();
 
   useEffect(() => {
@@ -65,10 +71,16 @@ export default function LanguageSwitcher() {
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
           <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-          <path d="M3 12h18M12 3c2.5 2.8 3.8 6 3.8 9s-1.3 6.2-3.8 9c-2.5-2.8-3.8-6-3.8-9s1.3-6.2 3.8-9z" stroke="currentColor" strokeWidth="1.6" />
+          <path
+            d="M3 12h18M12 3c2.5 2.8 3.8 6 3.8 9s-1.3 6.2-3.8 9c-2.5-2.8-3.8-6-3.8-9s1.3-6.2 3.8-9z"
+            stroke="currentColor"
+            strokeWidth="1.6"
+          />
         </svg>
         <span className="text-[12px] font-extrabold tracking-wide">{currentLabel}</span>
-        <span aria-hidden className="text-[9px] opacity-70">▾</span>
+        <span aria-hidden className="text-[9px] opacity-70">
+          ▾
+        </span>
       </button>
 
       {open && (
