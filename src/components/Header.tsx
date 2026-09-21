@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORIES, TOOLS } from "@/lib/registry";
-import LanguageSwitcher from "./LanguageSwitcher";
 
 export function Logo() {
   return (
@@ -116,7 +115,6 @@ export default function Header() {
       <div className="container-sf flex h-12 items-center gap-4">
         <Link href="/" aria-label="MapBench home"><Logo /></Link>
         <nav className="ml-auto hidden items-center gap-1 md:flex" aria-label="Main">
-          {/* Tools dropdown */}
           <div className="relative" ref={toolsRef}>
             <button
               type="button"
@@ -151,7 +149,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Maps dropdown */}
           <div className="relative" ref={mapsRef}>
             <button
               type="button"
@@ -195,12 +192,9 @@ export default function Header() {
           >
             Search <kbd className="ml-1 text-[10px]">⌘K</kbd>
           </button>
-          {/* Language — right side of bar */}
-          <LanguageSwitcher />
           <ThemeToggle />
         </nav>
         <div className="ml-auto flex items-center gap-1 md:hidden">
-          <LanguageSwitcher />
           <ThemeToggle />
           <button type="button" className="btn btn-ghost btn-sm" aria-expanded={open} aria-label="Toggle menu" onClick={() => setOpen((v) => !v)}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
