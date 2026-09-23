@@ -28,15 +28,15 @@ import BlankMapsHomeGrid from "@/components/BlankMapsHomeGrid";
 const POPULAR_QUESTIONS: { q: string; href: string }[] = [
   { q: "What county am I in?", href: "/tools/what-county-am-i-in" },
   { q: "How far can I drive in 30 minutes?", href: "/tools/drive-time-map" },
-  { q: "What is my elevation?", href: "/tools/elevation-finder" },
-  { q: "Find ZIP codes within 50 miles", href: "/tools/zip-codes-within-radius" },
-  { q: "Distance between two cities", href: "/tools/distance-between-two-places" },
-  { q: "What time zone am I in?", href: "/tools/what-timezone-am-i-in" },
-  { q: "Draw a radius on a map", href: "/tools/map-radius" },
-  { q: "What is my latitude and longitude?", href: "/tools/latitude-longitude-finder" },
-  { q: "Find cities within 100 miles", href: "/tools/cities-within-radius" },
-  { q: "Population within a radius", href: "/tools/population-within-radius" },
   { q: "Find my location", href: "/tools/find-my-location" },
+  { q: "Geocode a list of addresses (batch)", href: "/tools/batch-geocoder" },
+  { q: "Distance between two cities", href: "/tools/distance-between-two-places" },
+  { q: "Draw a radius on a map", href: "/tools/map-radius" },
+  { q: "Measure lot size or acreage on a map", href: "/tools/lot-size-calculator" },
+  { q: "What is my latitude and longitude?", href: "/tools/latitude-longitude-finder" },
+  { q: "Find ZIP codes within 50 miles", href: "/tools/zip-codes-within-radius" },
+  { q: "Qibla direction from my location", href: "/tools/qibla-direction-finder" },
+  { q: "Distance matrix for many places", href: "/tools/distance-matrix-calculator" },
   { q: "Sunrise and sunset times", href: "/tools/sunrise-sunset-calculator" },
 ];
 
@@ -103,7 +103,7 @@ export default function HomePage() {
             Free · No sign-up · Runs in your browser
           </p>
           <h1 className="font-display text-4xl font-bold leading-[1.12] tracking-tight text-ink sm:text-5xl md:text-[3.25rem]">
-            Free Map Tools &amp; Blank Maps
+            Free Map Tools & Blank Maps
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-mute sm:text-base">
             {TOOLS.length}+ interactive geographic tools and printable blank maps. Drive time maps, radius
@@ -261,7 +261,7 @@ export default function HomePage() {
           </ul>
           <p className="mt-3 font-sans text-sm">
             <Link href="/data-sources" className="font-extrabold text-brand-strong hover:underline">
-              Full attribution &amp; licences →
+              Full attribution & licences →
             </Link>
           </p>
         </div>
