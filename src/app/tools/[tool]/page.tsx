@@ -1,28 +1,42 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CATEGORIES, toolBySlug, TOOLS } from "@/lib/registry";
+import { toolBySlug, TOOLS, CATEGORIES } from "@/lib/registry";
 import { USER_FAQS } from "@/data/userFaqs";
-import ToolClient from "./ToolClient";
+import ToolClient from "@/components/ToolClient";
 
-interface Props {
-  params: Promise<{ tool: string }>;
-}
+interface Props { params: Promise<{ tool: string }> }
 
 export function generateStaticParams() {
   return TOOLS.map((t) => ({ tool: t.slug }));
+}
+
+function seoTitle(name: string, keywords: string[]) {
+  const primary = keywords[0];
+  if (primary && primary.length < 40 && !name.toLowerCase().includes(primary.toLowerCase())) {
+    return `${name} — Free Online ${primary.replace(/^./, (c) => c.toUpperCase())} Tool`;
+  }
+  return `${name} — Free Online Map Tool`;
+}
+
+function seoDescription(tool: { name: string; short: string; intro: string; scope: string }) {
+  const base = tool.intro?.trim() || tool.short;
+  const tail = ` Free, no sign-up. Coverage: ${tool.scope}. Runs in your browser on MapBench.`;
+  const combined = base.endsWith(".") ? base + tail : base + "." + tail;
+  return combined.length > 160 ? combined.slice(0, 157) + "…" : combined;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tool: slug } = await params;
   const tool = toolBySlug.get(slug);
   if (!tool) return {};
-  const description = tool.intro || tool.short;
-  const url = `https://www.mapbench.site/tools/${tool.slug}`;
+  const url = `/tools/${tool.slug}`;
+  const title = seoTitle(tool.name, tool.keywords);
+  const description = seoDescription(tool);
   return {
-    title: `${tool.name} — Free Online Tool`,
+    title,
     description,
-    keywords: tool.keywords,
-    alternates: { canonical: `/tools/${tool.slug}` },
+    keywords: [...tool.keywords, tool.name, "free", "map tool", "no sign-up"],
+    alternates: { canonical: url },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
