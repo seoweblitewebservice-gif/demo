@@ -1,5 +1,7 @@
 // Central tool registry
 import { EXTRA_TOOLS } from "@/data/toolsExtra";
+import { CORE_TOOLS } from "@/data/coreTools";
+
 export type CategoryId =
   | "location" | "distance" | "radius" | "routing" | "coordinates"
   | "files" | "creation" | "earth" | "sun" | "lines" | "population" | "network";
@@ -32,9 +34,10 @@ export interface ToolDef {
   faq: [string, string][]; howTo: string[]; related: string[]; method?: string;
 }
 
-import { CORE_TOOLS } from "@/data/coreTools";
-
-export const TOOLS: ToolDef[] = [...CORE_TOOLS, ...EXTRA_TOOLS];
+export const TOOLS: ToolDef[] = [
+  ...(CORE_TOOLS as unknown as ToolDef[]),
+  ...EXTRA_TOOLS,
+];
 
 export const toolBySlug = new Map(TOOLS.map((t) => [t.slug, t]));
 export const popularTools = TOOLS.filter((t) => t.popular);
