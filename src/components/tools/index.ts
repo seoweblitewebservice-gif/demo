@@ -51,6 +51,7 @@ const components: Record<string, () => Promise<{ default: ComponentType<{ params
   citycompare: () => import("./CompareTools").then((m) => ({ default: m.CityCompareTool })),
   col: () => import("./CompareTools").then((m) => ({ default: m.ColTool })),
   density: () => import("./CompareTools").then((m) => ({ default: m.DensityTool })),
+  batchgeocode: () => import("./BatchGeocodeTool"),
 };
 
 export const toolComponents: Record<string, ComponentType<{ params?: Record<string, unknown> }>> = Object.fromEntries(
