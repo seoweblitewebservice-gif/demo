@@ -86,7 +86,7 @@ const MAPS_MENU: { title: string; links: [string, string][]; more?: [string, str
       ["/tools/population-within-radius", "Population Within Radius"],
       ["/tools/map-area-calculator", "Map Area Calculator"],
       ["/tools/service-area-map", "Service Area Map"],
-      ["/tools/multiple-radius-tool", "Multiple Radius Tool"],
+      ["/tools/multi-radius-map", "Multiple Radius Tool"],
     ],
     more: ["/tools", "All tools →"],
   },
