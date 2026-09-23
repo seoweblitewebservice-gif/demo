@@ -1,1 +1,50 @@
-// SEE_FILE
+// Central tool registry
+import { EXTRA_TOOLS } from "@/data/toolsExtra";
+export type CategoryId =
+  | "location" | "distance" | "radius" | "routing" | "coordinates"
+  | "files" | "creation" | "earth" | "sun" | "lines" | "population" | "network";
+
+export interface CategoryDef {
+  id: CategoryId; label: string; short: string; tone: string;
+}
+
+export const CATEGORIES: CategoryDef[] = [
+  { id: "location", label: "Location", short: "County, city, state, ZIP, country and addresses.", tone: "#1d6e63" },
+  { id: "distance", label: "Distance & Bearing", short: "Distances, bearings and midpoints.", tone: "#b45309" },
+  { id: "routing", label: "Routing & Travel Time", short: "Routes, travel times and drive-time areas.", tone: "#9d174d" },
+  { id: "radius", label: "Radius & Area", short: "Radii, rings and polygon areas.", tone: "#4d7c0f" },
+  { id: "coordinates", label: "Coordinates", short: "Find and convert GPS coordinates.", tone: "#0e7490" },
+  { id: "files", label: "Map Files", short: "KML, GeoJSON, GPX and CSV.", tone: "#6d28d9" },
+  { id: "creation", label: "Map Creation", short: "Pins and custom maps.", tone: "#c2410c" },
+  { id: "earth", label: "Earth Science", short: "Elevation, horizon, antipodes.", tone: "#155e75" },
+  { id: "sun", label: "Sun & Moon", short: "Sunrise, sunset and day length.", tone: "#a16207" },
+  { id: "lines", label: "Geographic Lines", short: "Equator, tropics and meridians.", tone: "#334155" },
+  { id: "population", label: "Places & Population", short: "Cities and ZIP codes in a radius.", tone: "#7c2d12" },
+  { id: "network", label: "IP & Network", short: "IP geolocation and network details.", tone: "#475569" },
+];
+
+export interface ToolDef {
+  slug: string; name: string; short: string; intro: string;
+  category: CategoryId;
+  scope: "Worldwide" | "US focused" | "Major cities" | "Major airports";
+  component: string; props?: Record<string, unknown>;
+  keywords: string[]; popular?: boolean;
+  faq: [string, string][]; howTo: string[]; related: string[]; method?: string;
+}
+
+import { CORE_TOOLS } from "@/data/coreTools";
+
+export const TOOLS: ToolDef[] = [...CORE_TOOLS, ...EXTRA_TOOLS];
+
+export const toolBySlug = new Map(TOOLS.map((t) => [t.slug, t]));
+export const popularTools = TOOLS.filter((t) => t.popular);
+export const toolsByCategory = (id: CategoryId) => TOOLS.filter((t) => t.category === id);
+export const STATIC_LINKS = [
+  { href: "/", name: "Home", keywords: ["home"] },
+  { href: "/tools", name: "All Tools", keywords: ["directory"] },
+  { href: "/about", name: "About", keywords: ["about"] },
+  { href: "/methodology", name: "Methodology", keywords: ["methodology"] },
+  { href: "/data-sources", name: "Data Sources", keywords: ["data"] },
+  { href: "/privacy", name: "Privacy", keywords: ["privacy"] },
+  { href: "/contact", name: "Contact", keywords: ["contact"] },
+];
