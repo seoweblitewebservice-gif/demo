@@ -67,8 +67,6 @@ export default async function GuidePage({ params }: Props) {
   if (!g) notFound();
   const others = ALL_GUIDES.filter((x) => x.slug !== slug);
 
-  // ---- Long-form depth engine: compose original editorial sections until the
-  // ---- post lands inside the 2,000–2,500 word window.
   const bodyWords = g.blocks.reduce((acc, b) => {
     if (b.t === "p" || b.t === "h2" || b.t === "note") return acc + words(b.text);
     if (b.t === "ul") return acc + b.items.reduce((a, i) => a + words(i), 0);
@@ -183,21 +181,43 @@ export default async function GuidePage({ params }: Props) {
     if (acc >= 2000 && acc > 2300) break;
   }
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: g.title,
-    description: g.description,
-    datePublished: g.date,
-    dateModified: g.date,
-    author: { "@type": "Organization", name: "MapBench", url: "https://www.mapbench.site" },
-    publisher: { "@type": "Organization", name: "MapBench", url: "https://www.mapbench.site", logo: { "@type": "ImageObject", url: "https://www.mapbench.site/icon.svg" } },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.mapbench.site/guides/${g.slug}` },
-  };
+  const guideUrl = `https://www.mapbench.site/guides/${g.slug}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "@id": `${guideUrl}#article`,
+      headline: g.title,
+      description: g.description,
+      datePublished: g.date,
+      dateModified: g.date,
+      inLanguage: "en",
+      isAccessibleForFree: true,
+      author: { "@type": "Organization", name: "MapBench", url: "https://www.mapbench.site" },
+      publisher: {
+        "@type": "Organization",
+        name: "MapBench",
+        url: "https://www.mapbench.site",
+        logo: { "@type": "ImageObject", url: "https://www.mapbench.site/icon.svg" },
+      },
+      mainEntityOfPage: { "@type": "WebPage", "@id": guideUrl },
+      wordCount: acc,
+      timeRequired: `PT${g.readMins}M`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.mapbench.site/" },
+        { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.mapbench.site/guides" },
+        { "@type": "ListItem", position: 3, name: g.title, item: guideUrl },
+      ],
+    },
+  ];
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <article className="doc mx-auto max-w-3xl">
       <nav aria-label="Breadcrumb" className="mb-4 font-sans text-xs text-mute">
         <Link href="/" className="hover:text-brand-strong">Home</Link> / <Link href="/guides" className="hover:text-brand-strong">Blog</Link> / <span className="font-semibold text-ink">{g.title}</span>
