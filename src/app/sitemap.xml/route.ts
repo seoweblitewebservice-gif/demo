@@ -2,22 +2,19 @@ import { TOOLS } from "@/lib/registry";
 import { ALL_GUIDES } from "@/data/allGuides";
 import { LOCALES } from "@/lib/i18n";
 import { isToolLocalized } from "@/data/localizedTools";
-import countriesTopo from "world-atlas/countries-110m.json";
 
 export const dynamic = "force-static";
 export const revalidate = 86400;
 
+/**
+ * Lean sitemap for Google — priority indexable pages only.
+ * Flooding a new site with 300+ near-duplicate locale/blank-map URLs
+ * causes "Discovered – currently not indexed". Blank maps and thin
+ * locale shells stay live on the site but are discovered via internal
+ * links as authority grows.
+ */
 const BASE = "https://www.mapbench.site";
-const LASTMOD = "2026-09-21";
-
-function slugify(value: string) {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+const LASTMOD = "2026-09-24";
 
 function escapeXml(s: string) {
   return s
@@ -59,11 +56,11 @@ function buildUrls(): UrlRow[] {
     rows.push({ loc, lastmod, changefreq, priority });
   };
 
-  // Core static pages
+  // Core English pages
   add("/", "weekly", "1.0");
-  add("/tools", "weekly", "0.9");
+  add("/tools", "weekly", "0.95");
   add("/maps", "weekly", "0.9");
-  add("/guides", "weekly", "0.7");
+  add("/guides", "weekly", "0.8");
   add("/about", "monthly", "0.5");
   add("/methodology", "monthly", "0.5");
   add("/data-sources", "monthly", "0.5");
@@ -71,44 +68,50 @@ function buildUrls(): UrlRow[] {
   add("/privacy", "yearly", "0.3");
   add("/terms", "yearly", "0.3");
 
-  // Locale indexes
-  for (const locale of LOCALES) {
-    add(`/${locale}`, "weekly", "0.7");
-    add(`/${locale}/tools`, "weekly", "0.65");
-    add(`/${locale}/guides`, "monthly", "0.45");
-  }
-
-  // English tools
+  // All English tools (unique content)
   for (const t of TOOLS) {
-    add(`/tools/${t.slug}`, "monthly", t.popular ? "0.85" : "0.7");
+    add(`/tools/${t.slug}`, "monthly", t.popular ? "0.9" : "0.75");
   }
 
-  // Localized tools (only with copy)
+  // All guides (editorial)
+  for (const g of ALL_GUIDES) {
+    const lm = g.date ? String(g.date).slice(0, 10) : LASTMOD;
+    add(`/guides/${g.slug}`, "monthly", "0.65", lm);
+  }
+
+  // Only locales that have real tool translations (avoid thin /xx shells in sitemap)
   for (const locale of LOCALES) {
+    const hasAny = TOOLS.some((t) => isToolLocalized(locale, t.slug));
+    if (!hasAny) continue;
+    add(`/${locale}`, "weekly", "0.6");
+    add(`/${locale}/tools`, "weekly", "0.55");
     for (const t of TOOLS) {
       if (isToolLocalized(locale, t.slug)) {
-        add(`/${locale}/tools/${t.slug}`, "monthly", t.popular ? "0.65" : "0.55");
+        add(`/${locale}/tools/${t.slug}`, "monthly", t.popular ? "0.7" : "0.55");
       }
     }
   }
 
-  // Guides
-  for (const g of ALL_GUIDES) {
-    const lm = g.date ? String(g.date).slice(0, 10) : LASTMOD;
-    add(`/guides/${g.slug}`, "yearly", "0.55", lm);
-  }
-
-  // Country blank maps
-  const geometries =
-    (countriesTopo as { objects?: { countries?: { geometries?: { properties?: { name?: string } }[] } } })
-      ?.objects?.countries?.geometries ?? [];
-  const names = new Set<string>();
-  for (const g of geometries) {
-    if (g?.properties?.name) names.add(g.properties.name);
-  }
-  for (const name of Array.from(names).sort((a, b) => a.localeCompare(b))) {
-    const slug = slugify(name);
-    if (slug) add(`/maps/blank/${slug}`, "monthly", "0.6", "2026-01-01");
+  // High-demand blank maps only (hub /maps covers the rest via crawl)
+  const priorityMaps = [
+    "world",
+    "united-states-of-america",
+    "india",
+    "united-kingdom",
+    "canada",
+    "australia",
+    "germany",
+    "france",
+    "brazil",
+    "japan",
+    "mexico",
+    "spain",
+    "italy",
+    "china",
+    "russia",
+  ];
+  for (const slug of priorityMaps) {
+    add(`/maps/blank/${slug}`, "monthly", "0.55");
   }
 
   return rows;
