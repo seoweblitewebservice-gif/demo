@@ -3,6 +3,8 @@ import { EXTRA_TOOLS } from "@/data/toolsExtra";
 import { CORE_TOOLS } from "@/data/coreTools";
 import { TIER_A_TOOLS } from "@/data/toolsTierA";
 import { BATCH_TOOLS } from "@/data/toolsBatch";
+import { BULK1_TOOLS } from "@/data/toolsBulk1";
+import { BULK2_TOOLS } from "@/data/toolsBulk2";
 
 export type CategoryId =
   | "location" | "distance" | "radius" | "routing" | "coordinates"
@@ -41,6 +43,8 @@ export const TOOLS: ToolDef[] = [
   ...EXTRA_TOOLS,
   ...TIER_A_TOOLS,
   ...BATCH_TOOLS,
+  ...BULK1_TOOLS,
+  ...BULK2_TOOLS,
 ];
 
 export const toolBySlug = new Map(TOOLS.map((t) => [t.slug, t]));
