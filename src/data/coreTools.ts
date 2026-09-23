@@ -1,5 +1,7 @@
-/** Core tools — popular set. Batches B1-B3 merge when present. */
-export const CORE_TOOLS = [
+import { CORE_MORE } from "./coreToolsMore";
+
+/** Core tools — popular set + secondary restores in CORE_MORE. */
+const CORE_BASE = [
   {
     slug: "find-my-location",
     name: "Find My Location",
@@ -119,7 +121,7 @@ export const CORE_TOOLS = [
     keywords: ["area calculator", "measure area on map"], popular: true,
     faq: [["Curvature?", "Yes — geodesic area on the ellipsoid."]],
     howTo: ["Click to add vertices.", "Close the shape.", "Read the area table."],
-    related: ["map-radius"],
+    related: ["map-radius", "perimeter-calculator"],
   },
   {
     slug: "latitude-longitude-finder",
@@ -130,7 +132,7 @@ export const CORE_TOOLS = [
     keywords: ["latitude longitude", "gps coordinates"], popular: true,
     faq: [["Datum?", "WGS84 — same as GPS."]],
     howTo: ["Search or click the map.", "Copy the format you need."],
-    related: ["reverse-geocoder", "coordinate-converter"],
+    related: ["reverse-geocoder", "plus-code-finder", "utm-converter"],
   },
   {
     slug: "cities-within-radius",
@@ -163,7 +165,7 @@ export const CORE_TOOLS = [
     keywords: ["elevation", "altitude"],
     faq: [["Accuracy?", "Planning-grade DEM, not survey-grade."]],
     howTo: ["Search or click.", "Read elevation in m and ft."],
-    related: ["find-my-location"],
+    related: ["horizon-distance", "find-my-location"],
   },
   {
     slug: "bearing-calculator",
@@ -174,7 +176,7 @@ export const CORE_TOOLS = [
     keywords: ["bearing", "compass direction"],
     faq: [["True or magnetic?", "True north from the great-circle path."]],
     howTo: ["Set start and end.", "Read bearing and distance."],
-    related: ["distance-between-two-places"],
+    related: ["distance-between-two-places", "magnetic-declination"],
   },
   {
     slug: "reverse-geocoder",
@@ -196,7 +198,7 @@ export const CORE_TOOLS = [
     keywords: ["ip lookup", "ip geolocation"],
     faq: [["Exact location?", "No — network exit, not street address."]],
     howTo: ["Enter IP or detect yours.", "Read city, region, country, org."],
-    related: ["find-my-location"],
+    related: ["what-is-my-public-ip", "find-my-location"],
   },
   {
     slug: "address-to-coordinates",
@@ -273,7 +275,7 @@ export const CORE_TOOLS = [
     keywords: ["sunrise", "sunset", "solar noon"], popular: true,
     faq: [["Horizon blocked?", "Times assume a flat horizon; mountains shift what you see."]],
     howTo: ["Set location and date.", "Read sunrise, sunset and noon."],
-    related: ["golden-hour-calculator", "day-length-calculator"],
+    related: ["golden-hour-calculator", "day-length-calculator", "moon-phase-calculator"],
   },
   {
     slug: "day-length-calculator",
@@ -361,7 +363,7 @@ export const CORE_TOOLS = [
     keywords: ["coordinate converter", "dms converter"],
     faq: [["Datum?", "WGS84 assumed unless noted."]],
     howTo: ["Enter coordinates.", "Choose output format.", "Copy the result."],
-    related: ["decimal-to-dms", "dms-to-decimal", "latitude-longitude-finder"],
+    related: ["decimal-to-dms", "utm-converter", "plus-code-finder"],
   },
   {
     slug: "decimal-to-dms",
@@ -463,3 +465,5 @@ export const CORE_TOOLS = [
     related: ["map-radius", "drive-time-map"],
   },
 ] as const;
+
+export const CORE_TOOLS = [...CORE_BASE, ...CORE_MORE] as const;
