@@ -1,43 +1,28 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { toolBySlug, TOOLS, CATEGORIES } from "@/lib/registry";
+import { CATEGORIES, toolBySlug, TOOLS } from "@/lib/registry";
 import { USER_FAQS } from "@/data/userFaqs";
-import ToolClient from "@/components/ToolClient";
+import ToolClient from "./ToolClient";
 
-interface Props { params: Promise<{ tool: string }> }
+interface Props {
+  params: Promise<{ tool: string }>;
+}
 
 export function generateStaticParams() {
   return TOOLS.map((t) => ({ tool: t.slug }));
-}
-
-function seoTitle(name: string, keywords: string[]) {
-  const primary = keywords[0];
-  // Natural title: tool name + free cue — avoids keyword stuffing
-  if (primary && primary.length < 40 && !name.toLowerCase().includes(primary.toLowerCase())) {
-    return `${name} — Free Online ${primary.replace(/^./, (c) => c.toUpperCase())} Tool`;
-  }
-  return `${name} — Free Online Map Tool`;
-}
-
-function seoDescription(tool: { name: string; short: string; intro: string; scope: string }) {
-  const base = tool.intro?.trim() || tool.short;
-  const tail = ` Free, no sign-up. Coverage: ${tool.scope}. Runs in your browser on MapBench.`;
-  const combined = base.endsWith(".") ? base + tail : base + "." + tail;
-  return combined.length > 160 ? combined.slice(0, 157) + "…" : combined;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tool: slug } = await params;
   const tool = toolBySlug.get(slug);
   if (!tool) return {};
-  const url = `/tools/${tool.slug}`;
-  const title = seoTitle(tool.name, tool.keywords);
-  const description = seoDescription(tool);
+  const description = tool.intro || tool.short;
+  const url = `https://www.mapbench.site/tools/${tool.slug}`;
   return {
-    title,
+    title: `${tool.name} — Free Online Tool`,
     description,
-    keywords: [...tool.keywords, tool.name, "free", "map tool", "no sign-up"],
-    alternates: { canonical: url },
+    keywords: tool.keywords,
+    alternates: { canonical: `/tools/${tool.slug}` },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -74,15 +59,23 @@ export default async function ToolPage({ params }: Props) {
       operatingSystem: "Any (web browser)",
       isAccessibleForFree: true,
       browserRequirements: "Requires JavaScript and HTML5",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      inLanguage: "en",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", availability: "https://schema.org/InStock" },
       featureList: tool.howTo,
       keywords: tool.keywords.join(", "),
+      provider: {
+        "@type": "Organization",
+        name: "MapBench",
+        url: "https://www.mapbench.site",
+        logo: { "@type": "ImageObject", url: "https://www.mapbench.site/icon.svg" },
+      },
     },
     {
       "@context": "https://schema.org",
       "@type": "HowTo",
       name: `How to use ${tool.name}`,
       description: tool.short,
+      inLanguage: "en",
       step: tool.howTo.map((text, i) => ({
         "@type": "HowToStep",
         position: i + 1,
@@ -110,6 +103,16 @@ export default async function ToolPage({ params }: Props) {
         name: q,
         acceptedAnswer: { "@type": "Answer", text: a },
       })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": absoluteUrl,
+      url: absoluteUrl,
+      name: tool.name,
+      description: tool.short,
+      isPartOf: { "@type": "WebSite", name: "MapBench", url: "https://www.mapbench.site" },
+      about: { "@id": `${absoluteUrl}#tool` },
     },
   ];
 
