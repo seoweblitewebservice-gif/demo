@@ -1,6 +1,7 @@
 // Central tool registry
 import { EXTRA_TOOLS } from "@/data/toolsExtra";
 import { CORE_TOOLS } from "@/data/coreTools";
+import { TIER_A_TOOLS } from "@/data/toolsTierA";
 
 export type CategoryId =
   | "location" | "distance" | "radius" | "routing" | "coordinates"
@@ -37,6 +38,7 @@ export interface ToolDef {
 export const TOOLS: ToolDef[] = [
   ...(CORE_TOOLS as unknown as ToolDef[]),
   ...EXTRA_TOOLS,
+  ...TIER_A_TOOLS,
 ];
 
 export const toolBySlug = new Map(TOOLS.map((t) => [t.slug, t]));

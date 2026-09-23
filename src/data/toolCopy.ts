@@ -7,6 +7,7 @@ import { COPY6A } from "./toolCopy6a";
 import { COPY6B } from "./toolCopy6b";
 import { COPY7 } from "./toolCopy7";
 import { COPY8 } from "./toolCopy8";
+import { COPY9 } from "./toolCopy9";
 
 export interface ToolCopy { h2: string; paras: string[] }
 
@@ -21,4 +22,5 @@ export const TOOL_COPY: Record<string, ToolCopy> = {
   ...COPY6B,
   ...COPY7,
   ...COPY8,
+  ...COPY9,
 };
