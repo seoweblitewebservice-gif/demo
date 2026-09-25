@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { TOOLS } from "@/lib/registry";
 
-// Compact, professional footer: popular tools + key destinations + legal
-// (privacy & terms, as required by Google AdSense program policies).
+// Compact, professional footer: popular tools + key destinations + legal.
+// The tool count is derived from the registry so it cannot drift as tools are added.
 const POPULAR: [string, string][] = [
   ["/tools/find-my-location", "Find My Location"],
   ["/tools/what-county-am-i-in", "What County Am I In?"],
@@ -26,7 +27,7 @@ const MAPS: [string, string][] = [
 ];
 
 const RESOURCES: [string, string][] = [
-  ["/tools", "All 111 tools"],
+  ["/tools", `All ${TOOLS.length} tools`],
   ["/maps", "Blank map library"],
   ["/guides", "Blog"],
   ["/methodology", "Methodology"],
