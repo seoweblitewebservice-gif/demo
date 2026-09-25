@@ -52,6 +52,17 @@ const components: Record<string, () => Promise<{ default: ComponentType<{ params
   col: () => import("./CompareTools").then((m) => ({ default: m.ColTool })),
   density: () => import("./CompareTools").then((m) => ({ default: m.DensityTool })),
   batchgeocode: () => import("./BatchGeocodeTool"),
+  "growth-timezone": () => import("./GrowthTools").then((m) => ({ default: m.TimeZoneConverterTool })),
+  "growth-flight": () => import("./GrowthTools").then((m) => ({ default: m.FlightDistanceTool })),
+  "growth-meeting": () => import("./GrowthTools").then((m) => ({ default: m.MeetingPointTool })),
+  "growth-mapscale": () => import("./GrowthTools").then((m) => ({ default: m.MapScaleTool })),
+  "growth-bbox": () => import("./GrowthTools").then((m) => ({ default: m.BoundingBoxTool })),
+  "growth-slope": () => import("./GrowthTools").then((m) => ({ default: m.SlopeGradientTool })),
+  "growth-curvature": () => import("./GrowthTools").then((m) => ({ default: m.EarthCurvatureTool })),
+  "growth-radio-los": () => import("./GrowthTools").then((m) => ({ default: m.RadioLosTool })),
+  "growth-geojson-validator": () => import("./GrowthTools").then((m) => ({ default: m.GeoJsonValidatorTool })),
+  "growth-gpx-csv": () => import("./GrowthTools").then((m) => ({ default: m.GpxToCsvTool })),
+  "growth-gpx-merger": () => import("./GrowthTools").then((m) => ({ default: m.GpxMergerTool })),
 };
 
 export const toolComponents: Record<string, ComponentType<{ params?: Record<string, unknown> }>> = Object.fromEntries(
