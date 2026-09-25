@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const ISSUE_TRACKER = "https://github.com/seoweblitewebservice-gif/mapbenchsite/issues";
+
 export default function ContactPage() {
   return (
     <div className="doc mx-auto max-w-3xl">
@@ -16,41 +18,54 @@ export default function ContactPage() {
       </nav>
       <h1 className="font-display text-3xl font-bold tracking-tight">Contact MapBench</h1>
       <p className="mt-3">
-        Found a broken tool, inaccurate result, accessibility problem, map-data issue, or privacy concern?
-        We want to know so the site can be corrected rather than leaving users to work around an error.
+        Use this page to report a broken tool, inaccurate result, accessibility problem, map-data issue or privacy concern.
+        Clear reports help us reproduce problems and improve the site for everyone.
       </p>
 
       <section className="mt-8">
-        <h2 className="sect-h">Report a technical problem</h2>
+        <h2 className="sect-h">Technical and data issues</h2>
         <p className="mt-3">
-          Include the exact tool URL, what you entered, what result you expected, and what happened instead.
-          Screenshots or a small sample coordinate/file are useful when they do not contain private information.
+          MapBench maintains a public issue tracker for reproducible bugs and data problems. Include the exact MapBench URL,
+          what you entered, what you expected and what happened instead. Screenshots or a small sample coordinate/file can help,
+          provided they contain no private or confidential information.
         </p>
-      </section>
-
-      <section className="mt-8">
-        <h2 className="sect-h">Open-source project</h2>
-        <p className="mt-3">
-          MapBench is developed in a public GitHub repository. Technical issues and reproducible bugs can be
-          reported there:
-        </p>
-        <p className="mt-3">
+        <p className="mt-4">
           <a
-            href="https://github.com/seoweblitewebservice-gif/demo/issues"
+            href={ISSUE_TRACKER}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold text-brand-strong hover:underline"
+            className="inline-flex rounded-md border border-line px-4 py-2 font-bold text-brand-strong transition-colors hover:border-brand"
           >
-            MapBench GitHub issue tracker →
+            Open the MapBench issue tracker →
           </a>
         </p>
       </section>
 
       <section className="mt-8">
-        <h2 className="sect-h">Privacy questions</h2>
+        <h2 className="sect-h">What to include</h2>
+        <ul className="mt-3 list-disc space-y-2 pl-5">
+          <li>The URL of the affected page or tool.</li>
+          <li>A short description of the problem and the result you expected.</li>
+          <li>Your browser/device when the issue appears to be technical.</li>
+          <li>The relevant data source or location when reporting a geographic-data problem.</li>
+        </ul>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="sect-h">Privacy and sensitive information</h2>
         <p className="mt-3">
-          Before sending location or file information, read the <Link href="/privacy" className="font-bold text-brand-strong hover:underline">Privacy Policy</Link>.
-          Please do not include passwords, private addresses, personal identifiers, or confidential files in a bug report.
+          Review the <Link href="/privacy" className="font-bold text-brand-strong hover:underline">Privacy Policy</Link> before sharing any information.
+          Do not post passwords, private addresses, personal identifiers, confidential files or other sensitive data in a public issue.
+          If a report can be demonstrated with a generic example, please use that instead.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-lg border border-line p-5">
+        <h2 className="sect-h">More about MapBench</h2>
+        <p className="mt-3">
+          For how calculations are performed and where geographic data comes from, see our{" "}
+          <Link href="/methodology" className="font-bold text-brand-strong hover:underline">Methodology</Link> and{" "}
+          <Link href="/data-sources" className="font-bold text-brand-strong hover:underline">Data Sources</Link> pages.
         </p>
       </section>
     </div>
