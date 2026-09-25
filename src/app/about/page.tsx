@@ -15,32 +15,32 @@ export default function AboutPage() {
       <div className="prose-sf mt-6">
         <p>
           MapBench exists for one simple reason: geographic questions are everyday questions. <em>How far apart are these two towns?
-          What county am I standing in? How big is this field? What's inside my delivery radius?</em> Answering them shouldn't
+          What county am I standing in? How big is this field? What&apos;s inside my delivery radius?</em> Answering them shouldn&apos;t
           require a GIS license, a subscription, or handing your data to an unknown server.
         </p>
         <p>
-          So we built a platform of <strong>{TOOLS.length} free tools</strong> that run directly in your browser. Distances use proper
-          spherical geometry, not flat-map shortcuts. Routing follows the real road network. File viewers parse your KML, GPX,
-          GeoJSON and CSV locally — your files never leave your device.
+          We built a platform of <strong>{TOOLS.length} free tools</strong> that run directly in your browser. Distances use proper
+          spherical geometry rather than flat-map shortcuts. Routing follows real road networks. File viewers parse KML, GPX,
+          GeoJSON and CSV locally whenever the tool supports local processing, so sensitive files do not need to be uploaded just to inspect them.
         </p>
         <h2>What we optimise for</h2>
         <ul>
           <li><strong>Correctness</strong> — geodesic math, honest data labels, visible methodology.</li>
-          <li><strong>Privacy</strong> — no accounts, no stored locations, client-side file processing.</li>
-          <li><strong>Speed</strong> — every tool is its own lightweight page that loads only what it needs.</li>
-          <li><strong>Open data</strong> — OpenStreetMap, Natural Earth, US Census, Open-Meteo and free routing engines.</li>
+          <li><strong>Privacy</strong> — no account is required for the public tools, and file-processing behaviour is explained where relevant.</li>
+          <li><strong>Speed</strong> — each tool has its own focused page and loads only the functionality it needs.</li>
+          <li><strong>Open data</strong> — we rely on sources such as OpenStreetMap, Natural Earth, the US Census Bureau and other documented providers.</li>
         </ul>
         <h2>Honesty by design</h2>
         <p>
           Where a number is an estimate, we say so. Population figures carry their vintage year. Routing times are labelled
-          free-flow rather than pretending to be live traffic. The full details live on the
+          free-flow when live traffic is not available. The full details live on the
           {" "}<Link href="/methodology" className="font-semibold text-brand-strong hover:underline">methodology</Link> and{" "}
           <Link href="/data-sources" className="font-semibold text-brand-strong hover:underline">data sources</Link> pages.
         </p>
-        <h2>The name</h2>
+        <h2>Why the name MapBench?</h2>
         <p>
-          A forge is where raw material becomes useful tools. MapBench takes the world's open geographic data and shapes it
-          into small, sharp instruments you can pick up and use immediately.
+          A workbench is where useful tools are kept within reach. MapBench brings practical mapping, measurement and geographic
+          utilities together in one place so you can answer a question, inspect data or make a map without setting up specialist GIS software.
         </p>
       </div>
       <div className="mt-8 flex flex-wrap gap-2">
