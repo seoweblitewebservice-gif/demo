@@ -3,18 +3,17 @@ import Link from "next/link";
 import { ALL_GUIDES } from "@/data/allGuides";
 
 export const metadata: Metadata = {
-  title: "The MapForge Blog — Guides & Field Notes",
-  description: "Human-written guides on coordinates, GPS files, road trips, isochrones, golden hour, hardiness zones and city comparisons — every post linked to the free tools it uses.",
+  title: "MapBench Blog — Mapping Guides & Field Notes",
+  description: "Practical MapBench guides on coordinates, GPS files, road trips, isochrones, golden hour, hardiness zones and city comparisons, with links to the tools used in each workflow.",
   alternates: { canonical: "/guides" },
 };
 
 export default function GuidesPage() {
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold tracking-tight">The MapForge Blog</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight">MapBench Blog</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mute">
-        Guides and field notes written to be actually useful — real workflows, honest caveats, and internal links
-        to every tool a post relies on. No filler, no thin content.
+        Practical guides and field notes for mapping, coordinates, GPS files and location-based workflows. Each article explains the method, useful caveats and the MapBench tools involved.
       </p>
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {ALL_GUIDES.map((g) => (
